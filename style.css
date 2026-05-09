@@ -235,6 +235,111 @@ p{margin:.4em 0}
 .state-btn:hover{border-color:var(--accent-2);background:var(--surface)}
 .state-btn.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(124,58,237,.3)}
 
+/* ===================== 3D BLOCH SPHERE ===================== */
+.bloch-row{
+  display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:center;
+}
+@media(max-width:850px){.bloch-row{grid-template-columns:1fr;justify-items:center}}
+
+.bloch-stage{
+  width:320px;height:320px;perspective:900px;margin:0 auto;
+  user-select:none;
+}
+.bloch-cube{
+  width:100%;height:100%;position:relative;
+  transform-style:preserve-3d;
+  transform:rotateX(-22deg) rotateY(-30deg);
+  cursor:grab;
+  transition:transform .15s ease;
+}
+.bloch-cube:active{cursor:grabbing;transition:none}
+
+/* Wireframe great circles */
+.bloch-cube .ring{
+  position:absolute;left:50%;top:50%;
+  width:240px;height:240px;
+  margin:-120px 0 0 -120px;
+  border:1px solid rgba(124,58,237,.45);
+  border-radius:50%;
+  box-shadow:0 0 30px rgba(124,58,237,.08) inset;
+  transform-style:preserve-3d;
+  pointer-events:none;
+}
+.bloch-cube .ring.equator{transform:rotateX(90deg)}
+.bloch-cube .ring.meridian-x{}                       /* faces camera */
+.bloch-cube .ring.meridian-y{transform:rotateY(90deg)}
+
+/* Axes — three faint lines through the origin */
+.bloch-cube .b-axis{
+  position:absolute;left:50%;top:50%;
+  background:rgba(255,255,255,.18);
+  pointer-events:none;
+}
+.bloch-cube .b-axis.ax{
+  width:280px;height:1px;margin:0 0 0 -140px;
+}
+.bloch-cube .b-axis.az{
+  width:1px;height:280px;margin:-140px 0 0 0;
+}
+.bloch-cube .b-axis.ay{
+  width:280px;height:1px;margin:0 0 0 -140px;
+  transform:rotateY(90deg);
+}
+
+/* Axis labels */
+.bloch-cube .b-lbl{
+  position:absolute;left:50%;top:50%;
+  width:auto;
+  font-family:'STIX Two Math','Cambria Math','Times New Roman',serif;
+  font-size:.92rem;color:var(--accent-2);
+  background:rgba(10,14,26,.7);
+  padding:1px 6px;border-radius:4px;
+  pointer-events:none;
+  white-space:nowrap;
+}
+.bloch-cube .b-lbl.pos-z{transform:translate3d(-50%, -150px, 0)}
+.bloch-cube .b-lbl.neg-z{transform:translate3d(-50%, 138px, 0)}
+.bloch-cube .b-lbl.pos-x{transform:translate3d(140px, -50%, 0)}
+.bloch-cube .b-lbl.neg-x{transform:translate3d(-180px, -50%, 0)}
+.bloch-cube .b-lbl.pos-y{transform:translate3d(-50%, -50%, 140px)}
+.bloch-cube .b-lbl.neg-y{transform:translate3d(-50%, -50%, -140px)}
+
+/* State vector — a thin line from origin */
+.bloch-cube .bloch-vec{
+  position:absolute;left:50%;top:50%;
+  width:120px;height:3px;
+  background:linear-gradient(90deg,rgba(124,58,237,.1),var(--accent));
+  border-radius:2px;
+  transform-origin:0 50%;
+  margin-top:-1.5px;
+  box-shadow:0 0 12px rgba(124,58,237,.6);
+  pointer-events:none;
+  transition:transform .35s cubic-bezier(.34,1.4,.64,1);
+}
+.bloch-cube .bloch-tip{
+  position:absolute;left:50%;top:50%;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--accent);
+  margin:-7px 0 0 -7px;
+  box-shadow:0 0 18px var(--accent), inset 0 0 6px rgba(255,255,255,.5);
+  pointer-events:none;
+  transition:transform .35s cubic-bezier(.34,1.4,.64,1);
+}
+
+.bloch-controls{display:flex;flex-direction:column;gap:6px}
+.bloch-controls label{font-size:.92rem;margin-top:8px}
+.bloch-gate-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.bloch-gate-row .muted{font-size:.85rem;margin-right:4px}
+.bloch-gate{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:6px 12px;cursor:pointer;
+  font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:600;
+  transition:.15s;
+}
+.bloch-gate:hover{border-color:var(--accent-2);transform:translateY(-1px)}
+.bloch-gate:active{transform:translateY(0)}
+.bloch-view-row{font-size:.8rem;color:var(--muted);margin-top:8px}
+
 /* ===================== SLIDERS / PROBS ===================== */
 .slider{
   -webkit-appearance:none;appearance:none;

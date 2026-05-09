@@ -36,6 +36,7 @@
       <li><a href="#math">📐 Math Prerequisites</a></li>
       <li><a href="#postulates">📜 QM Postulates</a></li>
       <li><a href="#qubits"        data-mod="qubits">⚛  Qubits</a></li>
+      <li><a href="#bloch">🌐 Bloch Sphere</a></li>
       <li><a href="#superposition" data-mod="superposition">🌊 Superposition</a></li>
       <li><a href="#entanglement"  data-mod="entanglement">🔗 Entanglement</a></li>
       <li><a href="#bell">🔔 Bell's Inequality</a></li>
@@ -281,6 +282,73 @@
       </div>
 
       <div class="card quiz" data-quiz="qubits"><h3>Mini quiz</h3><div class="quiz-body"></div></div>
+    </section>
+
+    <!-- =================== BLOCH SPHERE =================== -->
+    <section class="module" id="bloch">
+      <div class="card lesson">
+        <h2>Bloch Sphere</h2>
+        <p>The Bloch sphere is the standard 3D picture of a single qubit. Every pure state
+          maps to a unique point on the unit sphere:</p>
+        <div class="math-formula" style="font-size:1.1rem">
+          |ψ⟩ = cos(θ/2)·|0⟩ + e<sup>iφ</sup>·sin(θ/2)·|1⟩
+        </div>
+        <p class="muted"><b>θ</b> (polar) is the angle from the |0⟩ pole; <b>φ</b> (azimuth)
+          is the angle around the equator. Drag the sliders or apply gates to watch the state
+          vector rotate.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>Try it · Rotate the qubit</h3>
+        <div class="bloch-row">
+          <div class="bloch-stage">
+            <div class="bloch-cube" id="bloch-cube">
+              <div class="ring equator"></div>
+              <div class="ring meridian-x"></div>
+              <div class="ring meridian-y"></div>
+              <div class="b-axis ax"></div>
+              <div class="b-axis ay"></div>
+              <div class="b-axis az"></div>
+              <span class="b-lbl pos-z">|0⟩</span>
+              <span class="b-lbl neg-z">|1⟩</span>
+              <span class="b-lbl pos-x">|+⟩</span>
+              <span class="b-lbl neg-x">|−⟩</span>
+              <span class="b-lbl pos-y">|+i⟩</span>
+              <span class="b-lbl neg-y">|−i⟩</span>
+              <div class="bloch-vec" id="bloch-vec"></div>
+              <div class="bloch-tip" id="bloch-tip"></div>
+            </div>
+          </div>
+          <div class="bloch-controls">
+            <label>θ (polar): <b><span id="bloch-theta-v">0</span>°</b></label>
+            <input type="range" min="0" max="180" value="0" step="1" id="bloch-theta" class="slider"/>
+            <label>φ (azimuth): <b><span id="bloch-phi-v">0</span>°</b></label>
+            <input type="range" min="0" max="360" value="0" step="1" id="bloch-phi" class="slider"/>
+            <div class="dirac-box" id="bloch-state"></div>
+            <div class="bloch-gate-row">
+              <span class="muted">Apply gate:</span>
+              <button class="bloch-gate" data-gate="X">X</button>
+              <button class="bloch-gate" data-gate="Y">Y</button>
+              <button class="bloch-gate" data-gate="Z">Z</button>
+              <button class="bloch-gate" data-gate="H">H</button>
+              <button class="bloch-gate" data-gate="S">S</button>
+              <button class="bloch-gate" data-gate="T">T</button>
+            </div>
+            <div class="bloch-gate-row">
+              <span class="muted">Preset:</span>
+              <button class="bloch-gate" data-preset="0">|0⟩</button>
+              <button class="bloch-gate" data-preset="1">|1⟩</button>
+              <button class="bloch-gate" data-preset="+">|+⟩</button>
+              <button class="bloch-gate" data-preset="-">|−⟩</button>
+              <button class="bloch-gate" data-preset="i">|+i⟩</button>
+              <button class="bloch-gate" data-preset="-i">|−i⟩</button>
+            </div>
+            <div class="bloch-view-row">
+              <label>View rotation: <span class="muted">drag the sphere</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- =================== SUPERPOSITION =================== -->

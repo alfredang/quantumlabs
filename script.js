@@ -385,6 +385,143 @@ function initQubits(){
   });
 }
 
+// ----- Bloch Sphere (3D, interactive) -----
+function initBloch(){
+  let theta = 0;     // polar from |0⟩, 0..π
+  let phi   = 0;     // azimuth, 0..2π
+  let viewX = -22;   // current view rotation in degrees
+  let viewY = -30;
+  const R = 120;     // px, sphere radius for vector
+
+  const cube  = document.getElementById('bloch-cube');
+  const tEl   = document.getElementById('bloch-theta');
+  const pEl   = document.getElementById('bloch-phi');
+  const tV    = document.getElementById('bloch-theta-v');
+  const pV    = document.getElementById('bloch-phi-v');
+  const vec   = document.getElementById('bloch-vec');
+  const tip   = document.getElementById('bloch-tip');
+  const stEl  = document.getElementById('bloch-state');
+  if(!cube) return;
+
+  // Complex helpers
+  const c     = (re, im=0) => [re, im];
+  const cAdd  = (a, b) => [a[0]+b[0], a[1]+b[1]];
+  const cMul  = (a, b) => [a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]];
+  const cAbs  = (z) => Math.hypot(z[0], z[1]);
+  const cArg  = (z) => Math.atan2(z[1], z[0]);
+
+  const I = c(1), Z0 = c(0);
+  const GATES = {
+    X: [[Z0, c(1)], [c(1), Z0]],
+    Y: [[Z0, c(0,-1)], [c(0,1), Z0]],
+    Z: [[I, Z0], [Z0, c(-1)]],
+    H: (() => { const s = 1/Math.SQRT2; return [[c(s),c(s)],[c(s),c(-s)]]; })(),
+    S: [[I, Z0], [Z0, c(0,1)]],
+    T: [[I, Z0], [Z0, c(Math.cos(Math.PI/4), Math.sin(Math.PI/4))]],
+  };
+
+  function update(){
+    // Display angle text
+    const tDeg = theta * 180 / Math.PI;
+    const pDeg = phi   * 180 / Math.PI;
+    tV.textContent = tDeg.toFixed(0);
+    pV.textContent = pDeg.toFixed(0);
+    tEl.value = tDeg.toFixed(0);
+    pEl.value = pDeg.toFixed(0);
+
+    // Tip position in CSS coords (physics x → css x; physics y → css z; physics z → −css y).
+    const sx =  R * Math.sin(theta) * Math.cos(phi);
+    const sy = -R * Math.cos(theta);
+    const sz =  R * Math.sin(theta) * Math.sin(phi);
+    tip.style.transform = `translate3d(${sx}px, ${sy}px, ${sz}px)`;
+
+    // Vector orientation: rotateY(−φ) then rotateZ(θ−π/2). Length R.
+    vec.style.transform = `rotateY(${-phi}rad) rotateZ(${theta - Math.PI/2}rad)`;
+
+    // Dirac notation
+    const cT = Math.cos(theta/2), sT = Math.sin(theta/2);
+    const phaseStr = (Math.abs(phi) < 1e-3 || Math.abs(sT) < 1e-6)
+      ? ''
+      : ` · e<sup>i·${pDeg.toFixed(0)}°</sup>`;
+    stEl.innerHTML = `
+      <span class="label">State |ψ⟩</span>
+      <div class="eq">|ψ⟩ = <span class="alpha">${cT.toFixed(3)}</span>·|0⟩ + <span class="beta">${sT.toFixed(3)}${phaseStr}</span>·|1⟩</div>
+      <span class="approx">θ = ${tDeg.toFixed(0)}°, &nbsp; φ = ${pDeg.toFixed(0)}°
+        &nbsp;·&nbsp; |α|² = ${(cT*cT*100).toFixed(1)}%, &nbsp; |β|² = ${(sT*sT*100).toFixed(1)}%</span>`;
+  }
+
+  function applyView(){
+    cube.style.transform = `rotateX(${viewX}deg) rotateY(${viewY}deg)`;
+  }
+
+  function applyGate(M){
+    // Current state ψ = [cos(θ/2), e^(iφ) sin(θ/2)]
+    const cT = Math.cos(theta/2), sT = Math.sin(theta/2);
+    const psi = [
+      [cT, 0],
+      [Math.cos(phi)*sT, Math.sin(phi)*sT],
+    ];
+    const out = [
+      cAdd(cMul(M[0][0], psi[0]), cMul(M[0][1], psi[1])),
+      cAdd(cMul(M[1][0], psi[0]), cMul(M[1][1], psi[1])),
+    ];
+    // Recover (θ, φ) modulo a global phase.
+    const m0 = cAbs(out[0]);
+    const m1 = cAbs(out[1]);
+    theta = 2 * Math.atan2(m1, m0);
+    if(m0 < 1e-9){
+      phi = ((cArg(out[1]) % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI);
+    } else {
+      const dphi = cArg(out[1]) - cArg(out[0]);
+      phi = ((dphi % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI);
+    }
+    update();
+  }
+
+  function setPreset(name){
+    switch(name){
+      case '0':  theta = 0;          phi = 0; break;
+      case '1':  theta = Math.PI;    phi = 0; break;
+      case '+':  theta = Math.PI/2;  phi = 0; break;
+      case '-':  theta = Math.PI/2;  phi = Math.PI; break;
+      case 'i':  theta = Math.PI/2;  phi = Math.PI/2; break;
+      case '-i': theta = Math.PI/2;  phi = 3*Math.PI/2; break;
+    }
+    update();
+  }
+
+  tEl.oninput = () => { theta = +tEl.value * Math.PI/180; update(); };
+  pEl.oninput = () => { phi   = +pEl.value * Math.PI/180; update(); };
+
+  document.querySelectorAll('#bloch .bloch-gate').forEach(b => {
+    b.onclick = () => {
+      if(b.dataset.gate)   applyGate(GATES[b.dataset.gate]);
+      if(b.dataset.preset) setPreset(b.dataset.preset);
+    };
+  });
+
+  // Drag to rotate view
+  let dragging = false, lastX = 0, lastY = 0;
+  cube.addEventListener('pointerdown', (e) => {
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+    cube.setPointerCapture(e.pointerId);
+  });
+  cube.addEventListener('pointermove', (e) => {
+    if(!dragging) return;
+    const dx = e.clientX - lastX, dy = e.clientY - lastY;
+    viewY += dx * 0.5;
+    viewX -= dy * 0.5;
+    viewX = Math.max(-85, Math.min(85, viewX));
+    lastX = e.clientX; lastY = e.clientY;
+    applyView();
+  });
+  cube.addEventListener('pointerup',   () => { dragging = false; });
+  cube.addEventListener('pointercancel',() => { dragging = false; });
+
+  applyView();
+  update();
+}
+
 // ----- Superposition: slider + bars + wave -----
 function initSuperposition(){
   const slider = document.getElementById('sp-slider');
@@ -2229,6 +2366,7 @@ function init(){
   renderGlossary();
   renderFaq();
   initQubits();
+  initBloch();
   initSuperposition();
   initEntanglement();
   initBell();
