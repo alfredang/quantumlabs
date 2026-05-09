@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>QuantumLab Beginner — Learn Quantum Computing Visually</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="logo">
+      <div class="logo-orb"></div>
+      <div>
+        <h1>QuantumLab Beginner</h1>
+        <p class="tagline">Learn Quantum Computing Visually</p>
+      </div>
+    </div>
+    <div class="overall-progress">
+      <div class="progress-label">
+        <span>Learning Path</span>
+        <span id="progress-text">0 / 8</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <button id="menu-toggle" aria-label="Toggle navigation">☰</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <nav class="sidebar" id="sidebar">
+    <h2>Modules</h2>
+    <ul class="nav-list">
+      <li><a href="#math">📐 Math Prerequisites</a></li>
+      <li><a href="#postulates">📜 QM Postulates</a></li>
+      <li><a href="#qubits"        data-mod="qubits">⚛  Qubits</a></li>
+      <li><a href="#superposition" data-mod="superposition">🌊 Superposition</a></li>
+      <li><a href="#entanglement"  data-mod="entanglement">🔗 Entanglement</a></li>
+      <li><a href="#bell">🔔 Bell's Inequality</a></li>
+      <li><a href="#measurement"   data-mod="measurement">📏 Measurement</a></li>
+      <li><a href="#gates">🧩 Quantum Gates</a></li>
+      <li><a href="#circuits"      data-mod="circuits">🔲 Quantum Circuits</a></li>
+      <li><a href="#kickback">↩ Phase Kickback</a></li>
+      <li><a href="#algorithms"    data-mod="algorithms">🧮 Quantum Algorithms</a></li>
+      <li><a href="#paradox">🌀 Quantum Paradoxes</a></li>
+      <li><a href="#crypto">🔐 Quantum Cryptography</a></li>
+      <li><a href="#noise"         data-mod="noise">📡 Noise</a></li>
+      <li><a href="#qec"           data-mod="qec">🛡 QEC</a></li>
+    </ul>
+    <h2>Reference</h2>
+    <ul class="nav-list">
+      <li><a href="#glossary">📖 Glossary</a></li>
+      <li><a href="#faq">❓ FAQ</a></li>
+      <li><a href="#challenge" id="nav-challenge">🏆 Final Challenge</a></li>
+    </ul>
+    <button id="reset-btn" class="ghost-btn">Reset Progress</button>
+  </nav>
+
+  <main class="content">
+
+    <!-- =================== MATH PREREQUISITES =================== -->
+    <section class="module" id="math">
+      <div class="card lesson">
+        <h2>Math Prerequisites</h2>
+        <p>The minimum math you need to read the rest of the lab. No proofs — just the
+          notation and the rules of the game. If you've seen complex numbers and matrix
+          multiplication, you already know almost everything here.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>1 · Vectors — column form &amp; Dirac notation</h3>
+        <p>A quantum state is just a list of complex numbers (a vector). For a single qubit
+          the list has length 2.</p>
+        <div class="math-row">
+          <div class="math-formula">
+            <span>|ψ⟩ =</span>
+            <span class="matrix"><span class="br l"></span>
+              <div class="grid" style="grid-template-columns:auto;gap:6px"><span>α</span><span>β</span></div>
+              <span class="br r"></span></span>
+            <span>= α|0⟩ + β|1⟩</span>
+          </div>
+        </div>
+        <p class="muted">The "ket" <b>|ψ⟩</b> is a column vector. Its conjugate-transpose is the
+          "bra" <b>⟨ψ| = (α*, β*)</b>. The inner product <b>⟨φ|ψ⟩</b> is a single complex number.
+          A state is <b>normalised</b> when ⟨ψ|ψ⟩ = |α|² + |β|² = 1.</p>
+        <div class="math-formula">⟨ψ|ψ⟩ = α*·α + β*·β = |α|² + |β|² = 1</div>
+      </div>
+
+      <div class="card try-it">
+        <h3>2 · Complex numbers</h3>
+        <p>A complex number is z = a + bi where i² = −1. We use them because quantum
+          amplitudes carry a <i>phase</i> as well as a magnitude.</p>
+        <div class="math-grid">
+          <div class="math-cell">
+            <div class="math-cell-h">Conjugate</div>
+            <div class="math-formula">z* = a − bi</div>
+          </div>
+          <div class="math-cell">
+            <div class="math-cell-h">Modulus²</div>
+            <div class="math-formula">|z|² = z·z* = a² + b²</div>
+          </div>
+          <div class="math-cell">
+            <div class="math-cell-h">Polar form</div>
+            <div class="math-formula">z = r·e<sup>iθ</sup> = r(cos θ + i sin θ)</div>
+          </div>
+          <div class="math-cell">
+            <div class="math-cell-h">Multiplication</div>
+            <div class="math-formula">e<sup>iα</sup>·e<sup>iβ</sup> = e<sup>i(α+β)</sup></div>
+          </div>
+        </div>
+        <p class="muted">Born-rule probabilities use <b>|amplitude|²</b>, so an overall phase
+          e<sup>iθ</sup> on a state is unobservable — only <i>relative</i> phases matter.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>3 · Operators &amp; matrices</h3>
+        <p>An operator is a linear map that takes a vector and returns another vector.
+          On a single qubit it is a 2×2 matrix.</p>
+        <div class="math-formula">
+          A|ψ⟩ =
+          <span class="matrix"><span class="br l"></span>
+            <div class="grid" style="grid-template-columns:auto auto;gap:6px 14px">
+              <span>a</span><span>b</span><span>c</span><span>d</span></div>
+            <span class="br r"></span></span>
+          ·
+          <span class="matrix"><span class="br l"></span>
+            <div class="grid" style="grid-template-columns:auto;gap:6px"><span>α</span><span>β</span></div>
+            <span class="br r"></span></span>
+          =
+          <span class="matrix"><span class="br l"></span>
+            <div class="grid" style="grid-template-columns:auto;gap:6px"><span>aα + bβ</span><span>cα + dβ</span></div>
+            <span class="br r"></span></span>
+        </div>
+        <p class="muted">Composition is just matrix multiplication. <b>A·B</b> means "apply B
+          first, then A". Order matters: in general AB ≠ BA.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>4 · Hermitian operators &amp; eigenvalues</h3>
+        <p>The <b>adjoint</b> A† ("A-dagger") is the conjugate-transpose. A matrix is
+          <b>Hermitian</b> when A† = A. Hermitian operators represent every <i>observable</i>
+          in QM (energy, spin, position, …).</p>
+        <div class="math-grid">
+          <div class="math-cell">
+            <div class="math-cell-h">Eigenvalue equation</div>
+            <div class="math-formula">A|v⟩ = λ|v⟩</div>
+          </div>
+          <div class="math-cell">
+            <div class="math-cell-h">Hermitian property</div>
+            <div class="math-formula">A† = A &nbsp;⇒&nbsp; eigenvalues λ are real</div>
+          </div>
+        </div>
+        <p class="muted"><b>Example.</b> The Pauli-Z operator is Hermitian. Its eigenvalues are
+          ±1; its eigenvectors are |0⟩ (eigenvalue +1) and |1⟩ (eigenvalue −1).
+          Measuring "Z" returns one of those two real numbers — never anything else.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>5 · Unitary operators</h3>
+        <p>A matrix U is <b>unitary</b> when U†U = I. Geometrically, U preserves lengths:
+          ⟨Uψ|Uψ⟩ = ⟨ψ|ψ⟩. So unitary evolution always keeps a normalised state normalised
+          — total probability stays 1.</p>
+        <div class="math-grid">
+          <div class="math-cell">
+            <div class="math-cell-h">Defining property</div>
+            <div class="math-formula">U†U = U·U† = I</div>
+          </div>
+          <div class="math-cell">
+            <div class="math-cell-h">Reversible</div>
+            <div class="math-formula">U⁻¹ = U†</div>
+          </div>
+        </div>
+        <p class="muted">Every quantum <b>gate</b> (X, Y, Z, H, CNOT, …) is unitary. That's why
+          quantum computation is reversible — the only step that isn't is measurement.</p>
+      </div>
+    </section>
+
+    <!-- =================== QM POSTULATES =================== -->
+    <section class="module" id="postulates">
+      <div class="card lesson">
+        <h2>The Five Postulates of Quantum Mechanics</h2>
+        <p>The whole edifice of QM rests on five short rules. Everything that follows in this
+          lab — superposition, entanglement, measurement, gates, algorithms — is just these
+          postulates being applied carefully.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>① State vector lives in a Hilbert space</h3>
+        <p>The complete state of an isolated quantum system is described by a unit vector
+          <b>|ψ⟩</b> in a complex <b>Hilbert space ℋ</b> (a complex inner-product space that's
+          closed under limits).</p>
+        <div class="math-formula">|ψ⟩ ∈ ℋ &nbsp; with &nbsp; ⟨ψ|ψ⟩ = 1</div>
+        <p class="muted">For one qubit, ℋ = ℂ² (two complex amplitudes).
+          For n qubits, ℋ = ℂ²ⁿ — the Hilbert space grows <b>exponentially</b> in qubit count.
+          That exponential room is the resource quantum computers exploit.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>② Time evolution is unitary</h3>
+        <p>An isolated (no-measurement) quantum system evolves through a <b>unitary
+          operator</b> U. Discretely:</p>
+        <div class="math-formula">|ψ(t₁)⟩ = U·|ψ(t₀)⟩,&nbsp; with &nbsp; U†U = I</div>
+        <p>Continuously, the Schrödinger equation:</p>
+        <div class="math-formula">i ℏ &nbsp;d|ψ⟩/dt &nbsp;=&nbsp; H |ψ⟩</div>
+        <p class="muted">Here H is the system's Hamiltonian (a Hermitian operator — the
+          observable for energy). Quantum <b>gates</b> are nothing more than carefully chosen
+          unitary U's applied for finite time.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>③ Observables are Hermitian operators</h3>
+        <p>Every physically measurable quantity (energy, position, spin, …) is represented by a
+          Hermitian operator <b>A</b> on ℋ. The only possible <b>outcomes</b> of a measurement
+          are the eigenvalues a<sub>i</sub> of A.</p>
+        <div class="math-formula">A |a<sub>i</sub>⟩ = a<sub>i</sub> |a<sub>i</sub>⟩,&nbsp; a<sub>i</sub> ∈ ℝ</div>
+        <p class="muted"><b>Example:</b> measuring "spin along Z" uses the Pauli-Z operator with
+          eigenvalues ±1 and eigenvectors |0⟩, |1⟩ — these are the only readings the apparatus
+          can ever produce.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>④ Born rule</h3>
+        <p>The probability of measuring outcome a<sub>i</sub> on state |ψ⟩ is the squared
+          modulus of the projection of |ψ⟩ onto the corresponding eigenvector:</p>
+        <div class="math-formula">P(a<sub>i</sub>) = |⟨a<sub>i</sub>|ψ⟩|²</div>
+        <p class="muted">Probabilities of all possible outcomes sum to 1 because |ψ⟩ is
+          normalised. This is the <i>only</i> non-deterministic ingredient in QM — everything
+          else (states, gates, evolution) is fully deterministic.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>⑤ Collapse — projective measurement</h3>
+        <p>Immediately after a measurement that returned outcome a<sub>i</sub>, the system's
+          state <b>collapses</b> to the corresponding (normalised) eigenvector:</p>
+        <div class="math-formula">|ψ⟩ &nbsp;⟶&nbsp; |a<sub>i</sub>⟩</div>
+        <p class="muted">A second measurement of the same observable will return a<sub>i</sub>
+          with certainty (probability 1) — the random part is "spent". Collapse is what makes
+          quantum mechanics non-reversible at the moment of measurement, and it's exactly the
+          rule that lets entanglement <i>look</i> like spooky action at a distance.</p>
+      </div>
+
+      <div class="card lesson">
+        <h3>Putting it together</h3>
+        <p class="muted">Every demo in this lab is some combination of these five rules:
+          ① pick a state, ② apply unitary gates, ③ ④ measure an observable to get an eigenvalue
+          with Born-rule probability, ⑤ the state collapses to that eigenvector. Everything
+          else — entanglement, interference, teleportation, error correction — emerges from
+          how those five steps interact.</p>
+      </div>
+    </section>
+
+    <!-- =================== QUBITS =================== -->
+    <section class="module" id="qubits">
+      <div class="card lesson">
+        <h2>Qubits — the building block</h2>
+        <p>A classical <span class="term" data-term="bit">bit</span> is either <b>0</b> or <b>1</b>. A
+          <span class="term" data-term="qubit">qubit</span> can be 0, 1, or a blend of both at once — a
+          <span class="term" data-term="superposition">superposition</span>. Tap the toggle to feel it.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>Try it · Bloch sphere toggle</h3>
+        <div class="bloch-wrap">
+          <div class="bloch" id="bloch">
+            <div class="bloch-circle"></div>
+            <div class="bloch-axis-z"></div>
+            <div class="bloch-axis-x"></div>
+            <div class="bloch-arrow" id="bloch-arrow"></div>
+            <div class="bloch-label top">|0⟩</div>
+            <div class="bloch-label bottom">|1⟩</div>
+          </div>
+          <div class="bloch-controls">
+            <button class="state-btn" data-state="0">State |0⟩</button>
+            <button class="state-btn" data-state="1">State |1⟩</button>
+            <button class="state-btn" data-state="s">Superposition</button>
+            <p class="muted" id="bloch-explain">Click a state above.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card quiz" data-quiz="qubits"><h3>Mini quiz</h3><div class="quiz-body"></div></div>
+    </section>
+
+    <!-- =================== SUPERPOSITION =================== -->
+    <section class="module" id="superposition">
+      <div class="card lesson">
+        <h2>Superposition</h2>
+        <p>Until measured, a qubit can be a mix of |0⟩ and |1⟩. Each outcome has a probability that
+          adds up to 100%. Move the slider to change the balance.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>Try it · Probability slider</h3>
+        <input type="range" min="0" max="100" value="50" id="sp-slider" class="slider"/>
+        <div class="dirac-box" id="sp-dirac"></div>
+        <div class="prob-row">
+          <div class="prob-block">
+            <div class="prob-label">P(0) = <span id="sp-p0">50</span>%</div>
+            <div class="prob-bar"><div class="prob-fill p0" id="sp-bar0"></div></div>
+          </div>
+          <div class="prob-block">
+            <div class="prob-label">P(1) = <span id="sp-p1">50</span>%</div>
+            <div class="prob-bar"><div class="prob-fill p1" id="sp-bar1"></div></div>
+          </div>
+        </div>
+        <canvas id="sp-wave" height="100"></canvas>
+      </div>
+
+      <div class="card quiz" data-quiz="superposition"><h3>Mini quiz</h3><div class="quiz-body"></div></div>
+    </section>
+
+    <!-- =================== ENTANGLEMENT =================== -->
+    <section class="module" id="entanglement">
+      <div class="card lesson">
+        <h2>Entanglement</h2>
+        <p>Two qubits can be linked so that measuring one instantly tells you about the other —
+          even if they are far apart. This is the magical Bell-state correlation.</p>
+      </div>
+      <div class="card try-it">
+        <h3>Try it · Bell pair</h3>
+        <div class="bell-pair">
+          <div class="qbox" id="qa"><div class="qlabel">Qubit A</div><div class="qval">?</div></div>
+          <div class="link-line"></div>
+          <div class="qbox" id="qb"><div class="qlabel">Qubit B</div><div class="qval">?</div></div>
+        </div>
+        <div class="row-buttons">
+          <button id="ent-measure" class="primary-btn">Measure A</button>
+          <button id="ent-reset" class="ghost-btn">Reset pair</button>
+        </div>
+        <p class="muted" id="ent-msg">Press “Measure A” — both will collapse to the same value.</p>
+
+        <div class="state-vector" id="ent-state">
+          <div class="sv-title">State vector</div>
+          <div class="sv-formula" id="ent-formula">|Φ⁺⟩ = <span class="frac"><span class="num">1</span><span class="den">√2</span></span>·|00⟩ + <span class="frac"><span class="num">1</span><span class="den">√2</span></span>·|11⟩</div>
+          <div class="sv-amps" id="ent-amps"></div>
+          <div class="sv-note muted" id="ent-note">An equal superposition of |00⟩ and |11⟩. The cross-terms |01⟩ and |10⟩ have amplitude 0 — that's the entanglement.</div>
+        </div>
+      </div>
+      <div class="card quiz" data-quiz="entanglement"><h3>Mini quiz</h3><div class="quiz-body"></div></div>
+    </section>
+
+    <!-- =================== BELL'S INEQUALITY =================== -->
+    <section class="module" id="bell">
+      <div class="card lesson">
+        <h2>Bell's Inequality</h2>
+        <p>If the world were ruled by <b>local hidden variables</b> (every qubit secretly carrying its
+          own pre-decided answer), the CHSH quantity |S| could never exceed <b>2</b>.
+          Real entangled qubits reach up to <b>2√2 ≈ 2.828</b>. Run the experiment below and watch
+          quantum mechanics break the classical ceiling.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>Try it · CHSH experiment</h3>
+        <p class="muted">A Bell pair |Φ⁺⟩ is shared between Alice and Bob. Each trial they
+          independently pick a measurement angle at random — Alice from {a₀ = 0°, a₁ = 90°},
+          Bob from {b₀ = 45°, b₁ = 135°}. We tally same-vs-different outcomes per setting pair
+          and compute the correlation E(aᵢ,bⱼ) = (#same − #diff) / N.</p>
+
+        <div class="bell-grid" id="bell-grid"></div>
+
+        <div class="bell-meter-wrap">
+          <div class="bell-S-display">
+            S = E(a₀,b₀) − E(a₀,b₁) + E(a₁,b₀) + E(a₁,b₁)
+            &nbsp;=&nbsp; <span id="bell-S">0.000</span>
+            &nbsp;·&nbsp; |S| = <span id="bell-Sabs">0.000</span>
+          </div>
+          <div class="bell-meter-track">
+            <div class="bell-meter-needle" id="bell-needle"></div>
+          </div>
+          <div class="bell-meter-marks">
+            <span style="left:0%">0</span>
+            <span style="left:50%">2 <small>classical bound</small></span>
+            <span style="left:70.7%">2√2 <small>quantum bound</small></span>
+            <span style="left:100%">4</span>
+          </div>
+          <div class="bell-verdict" id="bell-verdict">Press a button to start.</div>
+        </div>
+
+        <div class="row-buttons">
+          <button id="bell-run-q" class="primary-btn">Run 1000 quantum trials</button>
+          <button id="bell-run-c" class="ghost-btn">Run 1000 classical (hidden-variable) trials</button>
+          <button id="bell-reset" class="ghost-btn">Reset</button>
+        </div>
+        <p class="muted" id="bell-msg">Quantum prediction: |S| → 2√2 ≈ 2.828. Classical max: |S| ≤ 2.</p>
+      </div>
+    </section>
+
+    <!-- =================== MEASUREMENT =================== -->
+    <section class="module" id="measurement">
+      <div class="card lesson">
+        <h2>Measurement</h2>
+        <p>Measuring a qubit forces it to choose: 0 or 1. The probabilities decide how often each
+          appears. Run many measurements and watch the pattern emerge.</p>
+      </div>
+      <div class="card try-it">
+        <h3>Try it · Repeated measurement</h3>
+        <label>P(1) = <span id="m-pval">50</span>%</label>
+        <input type="range" min="0" max="100" value="50" id="m-slider" class="slider"/>
+        <div class="dirac-box" id="m-dirac"></div>
+        <div class="row-buttons">
+          <button id="m-once" class="primary-btn">Measure once</button>
+          <button id="m-many" class="primary-btn">Measure ×100</button>
+          <button id="m-reset" class="ghost-btn">Clear history</button>
+        </div>
+        <canvas id="m-chart" height="160"></canvas>
+        <p class="muted">Counts — <span class="dot c0"></span> zeros: <b id="m-c0">0</b> &nbsp;
+          <span class="dot c1"></span> ones: <b id="m-c1">0</b></p>
+      </div>
+      <div class="card quiz" data-quiz="measurement"><h3>Mini quiz</h3><div class="quiz-body"></div></div>
+    </section>
+
+    <!-- =================== QUANTUM GATES =================== -->
+    <section class="module" id="gates">
+      <div class="card lesson">
+        <h2>Quantum Gates Reference</h2>
+        <p>Gates are the building blocks of quantum circuits — small unitary (reversible) operations
+          that rotate qubit states. Each single-qubit gate is a 2×2 matrix; two-qubit gates are 4×4.
+          Hover or scroll the cards below to see each gate's symbol, matrix, effect, and intuition.</p>
+      </div>
+      <div class="card try-it">
+        <h3>Gate library</h3>
+        <div class="gates-grid" id="gates-grid"></div>
+      </div>
+    </section>
+
+    <!-- =================== CIRCUITS =================== -->
+    <section class="module" id="circuits">
+      <div class="card lesson">
+        <h2>Quantum Circuits</h2>
+        <p>A circuit is a sequence of <span class="term" data-term="gate">gates</span> applied to qubits, executed left to right.</p>
+        <p class="muted"><b>Tips:</b> drag a gate from the palette onto a wire, or click the gate then click a wire.
+           <b>Right-click</b> a placed Rx/Ry/Rz gate to change its angle.
+           <b>Left-click</b> any placed gate to remove it.</p>
+      </div>
+      <div class="card try-it">
+        <h3>Try it · Circuit builder</h3>
+        <div class="circuit-toolbar">
+          <div class="gate-palette">
+            <button class="gate-btn" data-gate="X">X<small>flip</small></button>
+            <button class="gate-btn" data-gate="Y">Y<small>flip+phase</small></button>
+            <button class="gate-btn" data-gate="Z">Z<small>phase</small></button>
+            <button class="gate-btn" data-gate="H">H<small>superpose</small></button>
+            <button class="gate-btn" data-gate="S">S<small>π/2 phase</small></button>
+            <button class="gate-btn" data-gate="T">T<small>π/4 phase</small></button>
+            <button class="gate-btn" data-gate="Rx">Rx(θ)<small>x-rot</small></button>
+            <button class="gate-btn" data-gate="Ry">Ry(θ)<small>y-rot</small></button>
+            <button class="gate-btn" data-gate="Rz">Rz(θ)<small>z-rot</small></button>
+            <button class="gate-btn" data-gate="CNOT">CNOT<small>entangle</small></button>
+            <button class="gate-btn" data-gate="CZ">CZ<small>ctrl-Z</small></button>
+            <button class="gate-btn" data-gate="BARRIER">┃<small>barrier</small></button>
+            <button class="gate-btn" data-gate="M">M<small>measure</small></button>
+          </div>
+          <div class="qubit-controls">
+            <span class="muted" id="qcount-label">2 qubits</span>
+            <button id="add-qubit" title="Add qubit">+</button>
+            <button id="rm-qubit" title="Remove qubit">−</button>
+          </div>
+        </div>
+        <p class="muted" id="cir-hint">Pick a gate, then click a wire to place it.</p>
+        <div class="circuit-canvas" id="circuit-canvas"></div>
+        <div class="row-buttons">
+          <button id="cir-run" class="primary-btn">Run circuit</button>
+          <button id="cir-clear" class="ghost-btn">Clear</button>
+        </div>
+        <div id="cir-output" class="output-box">State: |00⟩</div>
+      </div>
+      <div class="card quiz" data-quiz="circuits"><h3>Mini quiz</h3><div class="quiz-body"></div></div>
+    </section>
+
+    <!-- =================== PHASE KICKBACK =================== -->
+    <section class="module" id="kickback">
+      <div class="card lesson">
+        <h2>Phase Kickback</h2>
+        <p>One of the most beautiful tricks in quantum computing: a gate that's "controlled by"
+          the control qubit can end up changing the <i>control</i> itself instead of the target.
+          This effect powers Deutsch–Jozsa, phase estimation, and Shor's algorithm.</p>
+        <p class="muted">Rule of thumb: if the target is in an eigenstate |u⟩ of the controlled
+          operation U, with U|u⟩ = e<sup>iφ</sup>|u⟩, then the phase e<sup>iφ</sup> "kicks back"
+          onto the control's |1⟩ branch. The target stays put — the control picks up the phase.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>Try it · CNOT phase kickback</h3>
+        <p>Setup: control starts in <b>|+⟩</b> (after H on |0⟩). Pick a target state, then run CNOT.
+          Watch what happens to each qubit.</p>
+
+        <div class="kb-targets">
+          <button class="kb-target" data-state="0">Target = |0⟩</button>
+          <button class="kb-target" data-state="1">Target = |1⟩</button>
+          <button class="kb-target" data-state="+">Target = |+⟩</button>
+          <button class="kb-target active" data-state="-">Target = |−⟩</button>
+        </div>
+
+        <div class="kb-grid">
+          <div class="kb-stage">
+            <div class="kb-stage-title">Before CNOT</div>
+            <div class="kb-tensor" id="kb-init">|+⟩ ⊗ |−⟩</div>
+            <div class="sv-amps" id="kb-init-amps"></div>
+          </div>
+          <div class="kb-arrow">CNOT&nbsp;⟶</div>
+          <div class="kb-stage">
+            <div class="kb-stage-title">After CNOT</div>
+            <div class="kb-tensor" id="kb-final">|−⟩ ⊗ |−⟩</div>
+            <div class="sv-amps" id="kb-final-amps"></div>
+          </div>
+        </div>
+
+        <div class="kb-verdict" id="kb-verdict"></div>
+      </div>
+    </section>
+
+    <!-- =================== NOISE =================== -->
+    <section class="module" id="noise">
+      <div class="card lesson">
+        <h2>Noise on a Quantum Channel</h2>
+        <p>A qubit travelling across a wire, fiber, or memory cell passes through many tiny
+          environment "steps", each of which has a small chance of flipping it. Errors don't just
+          appear at the end — they accumulate <i>along the way</i>.</p>
+        <p class="muted">For a bit-flip channel with per-step probability p and length N steps,
+          the chance of an <i>odd</i> number of flips (i.e. a wrong final answer) is
+          P(error) = ½(1 − (1−2p)<sup>N</sup>). Even tiny p adds up over a long channel.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>Try it · Send a qubit through a noisy channel</h3>
+
+        <div class="n-ctrl-row">
+          <div>
+            <label>Per-step flip probability: <b><span id="n-val">5</span>%</b></label>
+            <input type="range" min="0" max="50" value="5" id="n-slider" class="slider"/>
+          </div>
+          <div>
+            <label>Channel length (steps): <b><span id="n-len-v">10</span></b></label>
+            <input type="range" min="1" max="30" value="10" id="n-len" class="slider"/>
+          </div>
+        </div>
+
+        <div class="row-buttons">
+          <button id="n-shot" class="primary-btn">Send 1 qubit</button>
+          <button id="n-run" class="primary-btn">Send 1000 qubits</button>
+        </div>
+
+        <div class="n-channel-wrap">
+          <div class="n-end in">|0⟩</div>
+          <div class="n-channel" id="n-channel"></div>
+          <div class="n-end out" id="n-output">?</div>
+        </div>
+        <p class="muted" id="n-shot-msg">Click "Send 1 qubit" to watch one travel through.</p>
+
+        <div class="n-stats">
+          <div class="prob-row">
+            <div class="prob-block">
+              <div class="prob-label">Output |0⟩  (correct):
+                <b id="n-c0">0</b> &nbsp;<span class="muted" id="n-c0pct">0%</span></div>
+              <div class="prob-bar"><div class="prob-fill p0" id="n-bar0"></div></div>
+            </div>
+            <div class="prob-block">
+              <div class="prob-label">Output |1⟩  (error):
+                <b id="n-c1">0</b> &nbsp;<span class="muted" id="n-c1pct">0%</span></div>
+              <div class="prob-bar"><div class="prob-fill p1" id="n-bar1"></div></div>
+            </div>
+          </div>
+          <p class="muted">Theoretical P(error) after the channel: <b id="n-theo">0%</b></p>
+        </div>
+      </div>
+      <div class="card quiz" data-quiz="noise"><h3>Mini quiz</h3><div class="quiz-body"></div></div>
+    </section>
+
+    <!-- =================== QUANTUM ERROR CORRECTION =================== -->
+    <section class="module" id="qec">
+      <div class="card lesson">
+        <h2>Quantum Error Correction</h2>
+        <p>Real qubits flip and decohere. <b>Quantum error correction (QEC)</b> protects information
+          by spreading one <i>logical</i> qubit across many <i>physical</i> qubits, so a single error
+          can be detected and reversed without ever measuring the encoded state.</p>
+        <p class="muted">The simplest example is the <b>3-qubit bit-flip code</b>:
+          encode |0⟩ → |000⟩ and |1⟩ → |111⟩. If at most one of the three physical qubits flips
+          on the way, a majority vote recovers the original. Two or three flips overwhelm it —
+          this is the trade-off in every QEC code.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>Try it · 3-qubit bit-flip code</h3>
+
+        <div class="qec-controls">
+          <div>
+            <span class="muted">Logical bit:</span>
+            <button class="qec-bit" data-bit="0">|0⟩</button>
+            <button class="qec-bit active" data-bit="1">|1⟩</button>
+          </div>
+          <div class="qec-noise-ctrl">
+            <label>Per-qubit flip probability: <b><span id="qec-noise-v">15</span>%</b></label>
+            <input type="range" min="0" max="100" value="15" id="qec-noise" class="slider"/>
+          </div>
+        </div>
+
+        <div class="qec-stage">
+          <div class="qec-section-title">① Encode  →  ② Channel (noise)  →  ③ Majority vote</div>
+          <div class="qec-channel" id="qec-channel"></div>
+          <div class="qec-decode-row">
+            Decoded logical bit: <span class="qec-decoded" id="qec-decoded">|1⟩</span>
+          </div>
+          <p class="qec-msg" id="qec-msg"></p>
+          <div class="row-buttons">
+            <button id="qec-run" class="primary-btn">Send another qubit</button>
+            <button id="qec-stats" class="primary-btn">Compare 1000 shots: bare vs coded</button>
+          </div>
+        </div>
+
+        <div class="qec-stats" id="qec-stats-panel">
+          <div class="qec-stat-row">
+            <span class="qec-stat-label">Bare qubit error rate</span>
+            <div class="qec-stat-bar"><div class="qec-stat-fill bare" id="qec-bare-bar"></div></div>
+            <span class="qec-stat-val" id="qec-bare">—</span>
+          </div>
+          <div class="qec-stat-row">
+            <span class="qec-stat-label">3-qubit code error rate</span>
+            <div class="qec-stat-bar"><div class="qec-stat-fill code" id="qec-coded-bar"></div></div>
+            <span class="qec-stat-val" id="qec-coded">—</span>
+          </div>
+          <p class="muted">Theoretical coded rate = 3p²(1−p) + p³ = <b id="qec-theo">—</b>.
+            QEC helps only when p &lt; 50% — above that the redundant qubits hurt more than they help.</p>
+        </div>
+      </div>
+
+      <div class="card quiz" data-quiz="qec"><h3>Mini quiz</h3><div class="quiz-body"></div></div>
+    </section>
+
+    <!-- =================== ALGORITHMS =================== -->
+    <section class="module" id="algorithms">
+      <div class="card lesson">
+        <h2>Quantum Algorithms</h2>
+        <p>Quantum algorithms use superposition and interference to find answers in clever ways.</p>
+      </div>
+      <div class="card try-it">
+        <h3>Try it · Pick a demo</h3>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="coin">Quantum coin flip</button>
+          <button class="tab-btn" data-tab="grover">Grover search</button>
+          <button class="tab-btn" data-tab="dj">Deutsch–Jozsa</button>
+          <button class="tab-btn" data-tab="tele">Teleportation</button>
+          <button class="tab-btn" data-tab="qft">QFT</button>
+          <button class="tab-btn" data-tab="shor">Shor (factor 15)</button>
+        </div>
+        <div class="tab-panel" id="tab-coin">
+          <p>Apply <b>H</b> to |0⟩ → measure. A perfectly fair coin.</p>
+          <div class="mini-circuit" id="circ-coin"></div>
+          <button id="coin-flip" class="primary-btn">Flip</button>
+          <div class="coin" id="coin-result">?</div>
+        </div>
+        <div class="tab-panel hidden" id="tab-grover">
+          <p>Search 4 boxes for the marked one. A classical search needs ~3 peeks; Grover needs <b>1</b>.</p>
+          <div class="mini-circuit" id="circ-grover"></div>
+          <div class="grover-row" id="grover-boxes"></div>
+          <button id="grover-run" class="primary-btn">Run Grover</button>
+          <p class="muted" id="grover-msg">Click Run to search.</p>
+        </div>
+        <div class="tab-panel hidden" id="tab-dj">
+          <p>Is the hidden function constant (always 0/1) or balanced (half-and-half)?
+            Classical: up to 3 queries. Quantum: <b>1</b>.</p>
+          <div class="mini-circuit" id="circ-dj"></div>
+          <button id="dj-new" class="ghost-btn">New function</button>
+          <button id="dj-run" class="primary-btn">Run Deutsch–Jozsa</button>
+          <p class="muted" id="dj-msg">Press “New function”, then “Run”.</p>
+        </div>
+        <div class="tab-panel hidden" id="tab-tele">
+          <p>Send a qubit's unknown state from <b>Alice</b> to <b>Bob</b> using a shared Bell pair
+            and 2 classical bits. The original is destroyed in the process (no-cloning).</p>
+          <div class="mini-circuit" id="circ-tele"></div>
+          <button id="tele-run" class="primary-btn">Run teleportation</button>
+          <div id="tele-steps" class="story-steps"></div>
+        </div>
+        <div class="tab-panel hidden" id="tab-qft">
+          <p>The Quantum Fourier Transform maps |x⟩ → (1/√N) Σₖ e<sup>2πi·xk/N</sup> |k⟩.
+            Every output basis state has equal <b>magnitude</b> — the algorithm hides its
+            answer in the <b>phases</b>. QFT is the engine inside Shor and quantum phase
+            estimation.</p>
+          <div class="mini-circuit" id="circ-qft"></div>
+          <div class="qft-controls">
+            <span class="muted">Input basis state: </span>
+            <span class="qft-inputs" id="qft-inputs"></span>
+          </div>
+          <div class="qft-results" id="qft-results"></div>
+          <p class="muted" id="qft-msg">Pick an input |x⟩ to see how QFT spreads it across all 8 basis states with phases winding by 2π·xk/N.</p>
+        </div>
+        <div class="tab-panel hidden" id="tab-shor">
+          <p>Shor's algorithm factors a number N by finding the period of f(x) = aˣ mod N.
+            The quantum part (period finding) is exponentially faster than classical.
+            Demo factors <b>N = 15</b>.</p>
+          <div class="mini-circuit" id="circ-shor"></div>
+          <button id="shor-run" class="primary-btn">Factor 15</button>
+          <pre id="shor-out" class="output-box">Press the button to factor.</pre>
+        </div>
+      </div>
+      <div class="card quiz" data-quiz="algorithms"><h3>Mini quiz</h3><div class="quiz-body"></div></div>
+    </section>
+
+    <!-- =================== QUANTUM PARADOXES =================== -->
+    <section class="module" id="paradox">
+      <div class="card lesson">
+        <h2>Quantum Paradoxes</h2>
+        <p>Quantum mechanics is famously weird. These thought experiments push the rules to
+          their breaking points — and they're still the subject of real philosophical debate
+          about what reality <i>is</i>.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>Pick a paradox</h3>
+        <div class="paradox-tabs">
+          <button class="pdx-tab active" data-pdx="cat">🐱 Schrödinger's Cat</button>
+          <button class="pdx-tab" data-pdx="wigner">👤 Wigner's Friend</button>
+          <button class="pdx-tab" data-pdx="frauch">👥 Friend-of-Friend</button>
+          <button class="pdx-tab" data-pdx="eraser">🚪 Quantum Eraser</button>
+          <button class="pdx-tab" data-pdx="delayed">⏳ Delayed-Choice Eraser</button>
+          <button class="pdx-tab" data-pdx="zeno">🔒 Quantum Zeno</button>
+        </div>
+
+        <!-- Cat -->
+        <div class="pdx-panel" id="pdx-cat">
+          <h4>Schrödinger's Cat (1935)</h4>
+          <p>A cat is sealed in a box with a radioactive atom and a poison vial. If the atom
+            decays, the poison kills the cat. While the box is closed, the atom is in a
+            superposition of "decayed" and "not decayed" — and so, by extension, the cat is
+            simultaneously alive AND dead.</p>
+          <div class="cat-stage">
+            <div class="cat-box closed" id="cat-box">
+              <div class="cat-vis">
+                <div class="cat-icon alive">😺</div>
+                <div class="cat-icon dead">💀</div>
+              </div>
+              <div class="cat-label" id="cat-label">|alive⟩ + |dead⟩</div>
+            </div>
+            <div class="cat-controls">
+              <label>Time elapsed: <b><span id="cat-time-v">10</span>%</b> chance of decay</label>
+              <input type="range" min="0" max="100" value="10" id="cat-time" class="slider"/>
+              <div class="row-buttons">
+                <button id="cat-open" class="primary-btn">Open the box</button>
+                <button id="cat-reset" class="ghost-btn">Re-seal &amp; reset</button>
+              </div>
+              <p class="muted" id="cat-msg">The box is closed — the cat is in superposition.</p>
+            </div>
+          </div>
+          <p class="muted"><b>The puzzle:</b> standard QM says superposition continues until
+            <i>measurement</i>. But cats, geiger counters, and poison are macroscopic. Where exactly
+            does the line between quantum-blurry and classically-definite reality live?</p>
+        </div>
+
+        <!-- Wigner's Friend -->
+        <div class="pdx-panel hidden" id="pdx-wigner">
+          <h4>Wigner's Friend (1961)</h4>
+          <p>Wigner's friend is in a sealed lab with a qubit in superposition. The friend
+            measures it. From <i>her</i> point of view, the qubit collapsed. From <i>Wigner's</i>
+            point of view (he's outside the lab), the friend AND the qubit are now jointly in
+            superposition. Two observers, two incompatible descriptions of the same event.</p>
+          <div class="wig-stage">
+            <div class="wig-actor">
+              <div class="wig-icon">🧑‍🔬</div>
+              <div class="wig-name">Friend (inside)</div>
+              <div class="wig-state" id="wig-friend">|+⟩ — superposition</div>
+            </div>
+            <div class="wig-divider">🚪 Lab wall</div>
+            <div class="wig-actor">
+              <div class="wig-icon">👨</div>
+              <div class="wig-name">Wigner (outside)</div>
+              <div class="wig-state" id="wig-wigner">Lab in superposition</div>
+            </div>
+          </div>
+          <div class="row-buttons">
+            <button id="wig-step1" class="primary-btn">① Friend measures the qubit</button>
+            <button id="wig-step2" class="primary-btn">② Wigner measures the lab</button>
+            <button id="wig-reset" class="ghost-btn">Reset</button>
+          </div>
+          <p id="wig-msg" class="muted">Click ① to start. Watch how the two descriptions diverge.</p>
+        </div>
+
+        <!-- Friend of Friend -->
+        <div class="pdx-panel hidden" id="pdx-frauch">
+          <h4>Frauchiger–Renner: Friend-of-a-Friend (2018)</h4>
+          <p>A modern extension. Now imagine <b>two</b> Wigner-friend pairs — Alice with her
+            friend F₁, Bob with his friend F₂ — performing a carefully choreographed sequence of
+            quantum and classical reasoning steps about each other's measurements.</p>
+          <div class="frauch-chain">
+            <div class="fc-actor">F₁<br><small>inside lab A</small></div>
+            <div class="fc-arrow">→ reasons about →</div>
+            <div class="fc-actor">F₂<br><small>inside lab B</small></div>
+            <div class="fc-arrow">→ reasons about →</div>
+            <div class="fc-actor">Alice<br><small>outside</small></div>
+            <div class="fc-arrow">→ reasons about →</div>
+            <div class="fc-actor">Bob<br><small>outside</small></div>
+          </div>
+          <p>Frauchiger and Renner showed that if all four observers use standard QM and
+            <b>trust each other's reasoning</b>, they reach a logical contradiction:
+            with a small but non-zero probability, the protocol forces them to disagree
+            about a definite outcome.</p>
+          <p class="muted"><b>The takeaway:</b> at least one of these "obvious" assumptions must
+            be wrong — universal validity of QM, single outcomes for measurements, or that
+            an agent's predictions about another agent's results carry over. Different
+            interpretations (Many-Worlds, QBism, RQM, Bohmian) bite different bullets.</p>
+        </div>
+
+        <!-- Quantum Eraser -->
+        <div class="pdx-panel hidden" id="pdx-eraser">
+          <h4>Quantum Eraser</h4>
+          <p>In a double-slit experiment, photons make an interference pattern — until you
+            install a "which-path" detector. The pattern collapses into two clumps. Now the
+            twist: <b>erase</b> the path information after the photon has hit the screen, and
+            the interference comes back. The photon "knows" whether you peeked.</p>
+
+          <svg class="paradox-svg" viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Laser -->
+            <rect x="10" y="80" width="70" height="30" rx="5" fill="#ef4444"/>
+            <text x="45" y="100" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">LASER</text>
+            <!-- Beam -->
+            <line x1="80" y1="95" x2="195" y2="95" stroke="#fbbf24" stroke-width="2.5"/>
+            <!-- Slit wall -->
+            <rect x="195" y="15" width="6" height="65" fill="#64748b"/>
+            <rect x="195" y="92" width="6" height="6" fill="#64748b"/>
+            <rect x="195" y="110" width="6" height="65" fill="#64748b"/>
+            <text x="198" y="11" text-anchor="middle" fill="#94a3b8" font-size="10">double slit</text>
+            <!-- Two paths -->
+            <path d="M201,95 Q380,40 580,40" stroke="#06b6d4" stroke-width="1.6" stroke-dasharray="4 3" fill="none" opacity="0.75"/>
+            <path d="M201,95 Q380,150 580,150" stroke="#06b6d4" stroke-width="1.6" stroke-dasharray="4 3" fill="none" opacity="0.75"/>
+            <text x="290" y="35" fill="#06b6d4" font-size="10">path A</text>
+            <text x="290" y="160" fill="#06b6d4" font-size="10">path B</text>
+            <!-- Path detector overlay -->
+            <rect x="295" y="55" width="90" height="22" rx="4" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <text x="340" y="70" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="600">path detector</text>
+            <!-- Eraser overlay -->
+            <rect x="430" y="118" width="80" height="22" rx="4" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="3 2"/>
+            <text x="470" y="133" text-anchor="middle" fill="#10b981" font-size="10" font-weight="600">eraser</text>
+            <!-- Screen -->
+            <line x1="580" y1="15" x2="580" y2="180" stroke="#a855f7" stroke-width="3"/>
+            <text x="600" y="100" fill="#a855f7" font-size="11">screen</text>
+            <!-- Pattern dots -->
+            <g fill="#a855f7" opacity="0.85">
+              <circle cx="588" cy="35"  r="1.5"/>
+              <circle cx="592" cy="55"  r="3"/>
+              <circle cx="588" cy="75"  r="1.5"/>
+              <circle cx="592" cy="95"  r="3.5"/>
+              <circle cx="588" cy="115" r="1.5"/>
+              <circle cx="592" cy="135" r="3.5"/>
+              <circle cx="588" cy="155" r="1.5"/>
+              <circle cx="592" cy="175" r="3"/>
+            </g>
+          </svg>
+
+          <div class="er-controls">
+            <label class="er-toggle"><input type="checkbox" id="er-detector"/> Path detector ON</label>
+            <label class="er-toggle"><input type="checkbox" id="er-eraser"/> Eraser ON</label>
+            <button id="er-run" class="primary-btn">Send 800 photons</button>
+            <button id="er-clear" class="ghost-btn">Clear screen</button>
+          </div>
+          <canvas id="er-screen" height="160"></canvas>
+          <p id="er-msg" class="muted">Toggle the detector and eraser, then click "Send photons".</p>
+        </div>
+
+        <!-- Delayed-Choice Eraser -->
+        <div class="pdx-panel hidden" id="pdx-delayed">
+          <h4>Delayed-Choice Quantum Eraser (Scully &amp; Drühl, 1982 / Kim et al., 2000)</h4>
+          <p>The shocker: the choice to <i>erase</i> path information can be made <b>after</b>
+            the signal photon has already been detected. Yet the interference pattern only
+            appears for the subset of runs where erasure happened — a result that seems to
+            depend on a future event.</p>
+          <p class="muted">No actual signal travels back in time. The "raw" pattern at the
+            screen is always smeared. Interference is only revealed by <i>conditioning</i>
+            (sorting) the screen data on the eraser outcome — which is recorded later.
+            In other words: the future "choice" doesn't change what happened — it changes
+            which subset of the data you look at.</p>
+
+          <svg class="paradox-svg" viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg">
+            <!-- Laser -->
+            <rect x="10" y="115" width="60" height="26" rx="4" fill="#ef4444"/>
+            <text x="40" y="133" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">LASER</text>
+            <line x1="70" y1="128" x2="138" y2="128" stroke="#fbbf24" stroke-width="2"/>
+            <!-- BBO crystal (entangled-pair source) -->
+            <rect x="138" y="108" width="40" height="40" fill="#7c3aed" stroke="#a78bfa"/>
+            <text x="158" y="170" text-anchor="middle" fill="#a78bfa" font-size="10">BBO crystal</text>
+            <text x="158" y="183" text-anchor="middle" fill="#94a3b8" font-size="9">(entangled pair)</text>
+            <!-- Signal arm -->
+            <line x1="178" y1="118" x2="630" y2="36" stroke="#06b6d4" stroke-width="1.6" stroke-dasharray="3 3"/>
+            <text x="340" y="60" fill="#06b6d4" font-size="11" font-weight="600">signal photon</text>
+            <text x="340" y="74" fill="#94a3b8" font-size="9">— hits screen FIRST</text>
+            <rect x="630" y="20" width="50" height="38" rx="3" fill="#06b6d4"/>
+            <text x="655" y="44" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">D₀</text>
+            <text x="630" y="73" fill="#06b6d4" font-size="9">screen detector</text>
+            <!-- Idler arm -->
+            <line x1="178" y1="138" x2="270" y2="195" stroke="#ec4899" stroke-width="1.6" stroke-dasharray="3 3"/>
+            <text x="195" y="225" fill="#ec4899" font-size="11" font-weight="600">idler photon</text>
+            <!-- Delay loop -->
+            <path d="M270,195 Q300,228 330,195" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="2 2"/>
+            <text x="300" y="225" fill="#94a3b8" font-size="9" text-anchor="middle">delay line</text>
+            <line x1="330" y1="195" x2="385" y2="195" stroke="#ec4899" stroke-width="1.6" stroke-dasharray="3 3"/>
+            <!-- Beam splitter (eraser/which-way choice) -->
+            <line x1="378" y1="178" x2="395" y2="212" stroke="#fbbf24" stroke-width="2.5"/>
+            <text x="386" y="170" text-anchor="middle" fill="#fbbf24" font-size="9">eraser BS</text>
+            <!-- Two output detectors -->
+            <line x1="395" y1="195" x2="510" y2="160" stroke="#10b981" stroke-width="1.4" stroke-dasharray="3 3"/>
+            <line x1="395" y1="195" x2="510" y2="225" stroke="#10b981" stroke-width="1.4" stroke-dasharray="3 3"/>
+            <rect x="510" y="148" width="42" height="22" rx="3" fill="#10b981"/>
+            <text x="531" y="164" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">D₁</text>
+            <rect x="510" y="218" width="42" height="22" rx="3" fill="#10b981"/>
+            <text x="531" y="234" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">D₂</text>
+            <text x="560" y="172" fill="#10b981" font-size="9">erase outcome "+"</text>
+            <text x="560" y="232" fill="#10b981" font-size="9">erase outcome "−"</text>
+            <text x="560" y="200" fill="#94a3b8" font-size="9">(decided AFTER D₀)</text>
+          </svg>
+
+          <button id="dl-run" class="primary-btn">Run experiment (compare)</button>
+          <div class="dl-grid" id="dl-grid"></div>
+          <p id="dl-msg" class="muted">Click run to see the unconditioned pattern (no fringes)
+            and the two eraser-conditioned subsets (interference patterns shifted by π).</p>
+        </div>
+
+        <!-- Quantum Zeno -->
+        <div class="pdx-panel hidden" id="pdx-zeno">
+          <h4>Quantum Zeno Effect</h4>
+          <p>"A watched pot never boils." In quantum mechanics, this is literally true. A qubit
+            slowly evolving from |0⟩ to |1⟩ can be <b>frozen</b> in |0⟩ simply by measuring it
+            often enough — each measurement projects the qubit back to where it started.</p>
+
+          <svg class="paradox-svg" viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Left scenario: free evolution -->
+            <g transform="translate(40,20)">
+              <text x="80" y="0" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="600">No measurement</text>
+              <circle cx="80" cy="80" r="55" fill="rgba(124,58,237,0.06)" stroke="#475569" stroke-width="1"/>
+              <line x1="25" y1="80" x2="135" y2="80" stroke="#475569" stroke-width="0.5" stroke-dasharray="2 2"/>
+              <text x="80" y="20" text-anchor="middle" fill="#06b6d4" font-size="10">|0⟩</text>
+              <text x="80" y="148" text-anchor="middle" fill="#ec4899" font-size="10">|1⟩</text>
+              <!-- Step arrows showing rotation -->
+              <line x1="80" y1="80" x2="80" y2="28" stroke="#a78bfa" stroke-width="1.5" opacity="0.3"/>
+              <line x1="80" y1="80" x2="115" y2="46" stroke="#a78bfa" stroke-width="1.5" opacity="0.4"/>
+              <line x1="80" y1="80" x2="135" y2="80" stroke="#a78bfa" stroke-width="1.5" opacity="0.5"/>
+              <line x1="80" y1="80" x2="115" y2="114" stroke="#a78bfa" stroke-width="1.5" opacity="0.65"/>
+              <!-- Final arrow at |1⟩ -->
+              <line x1="80" y1="80" x2="80" y2="132" stroke="#ec4899" stroke-width="2.5"/>
+              <polygon points="80,132 75,122 85,122" fill="#ec4899"/>
+              <text x="155" y="65" fill="#94a3b8" font-size="10">qubit slowly</text>
+              <text x="155" y="78" fill="#94a3b8" font-size="10">rotates from</text>
+              <text x="155" y="91" fill="#94a3b8" font-size="10">|0⟩ → |1⟩</text>
+              <text x="155" y="108" fill="#ec4899" font-size="10" font-weight="700">→ DECAYS</text>
+            </g>
+            <!-- Divider -->
+            <line x1="365" y1="20" x2="365" y2="180" stroke="#262e47" stroke-width="1" stroke-dasharray="3 3"/>
+            <!-- Right scenario: frequent measurement -->
+            <g transform="translate(420,20)">
+              <text x="80" y="0" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="600">Frequent measurement</text>
+              <circle cx="80" cy="80" r="55" fill="rgba(16,185,129,0.06)" stroke="#475569" stroke-width="1"/>
+              <line x1="25" y1="80" x2="135" y2="80" stroke="#475569" stroke-width="0.5" stroke-dasharray="2 2"/>
+              <text x="80" y="20" text-anchor="middle" fill="#06b6d4" font-size="10">|0⟩</text>
+              <text x="80" y="148" text-anchor="middle" fill="#ec4899" font-size="10">|1⟩</text>
+              <!-- Tiny rotation attempts that get reset -->
+              <g opacity="0.5">
+                <line x1="80" y1="80" x2="86" y2="28" stroke="#a78bfa" stroke-width="1"/>
+                <line x1="80" y1="80" x2="74" y2="28" stroke="#a78bfa" stroke-width="1"/>
+                <line x1="80" y1="80" x2="90" y2="30" stroke="#a78bfa" stroke-width="1"/>
+              </g>
+              <!-- Stays at |0⟩ -->
+              <line x1="80" y1="80" x2="80" y2="28" stroke="#10b981" stroke-width="2.5"/>
+              <polygon points="80,28 75,38 85,38" fill="#10b981"/>
+              <!-- Measurement clock dots -->
+              <g fill="#10b981">
+                <circle cx="100" cy="38" r="2.5"/>
+                <circle cx="108" cy="46" r="2.5"/>
+                <circle cx="115" cy="55" r="2.5"/>
+                <circle cx="120" cy="65" r="2.5"/>
+              </g>
+              <text x="160" y="50" fill="#10b981" font-size="10">measurements</text>
+              <text x="160" y="63" fill="#10b981" font-size="10">keep snapping</text>
+              <text x="160" y="76" fill="#10b981" font-size="10">it back to |0⟩</text>
+              <text x="160" y="100" fill="#10b981" font-size="11" font-weight="700">→ FROZEN</text>
+            </g>
+          </svg>
+
+          <div class="zeno-controls">
+            <label>Measure every <b><span id="zeno-int-v">10</span></b> steps
+              <input type="range" min="1" max="60" value="10" id="zeno-int" class="slider"/>
+            </label>
+            <button id="zeno-run" class="primary-btn">Run 60 steps</button>
+          </div>
+          <canvas id="zeno-canvas" height="180"></canvas>
+          <p id="zeno-msg" class="muted">Without any measurement (interval = 60), the qubit
+            evolves freely. With frequent measurements (interval = 1), it stays in |0⟩.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =================== QUANTUM CRYPTOGRAPHY (BB84) =================== -->
+    <section class="module" id="crypto">
+      <div class="card lesson">
+        <h2>Quantum Cryptography (BB84)</h2>
+        <p>BB84 — invented by Bennett &amp; Brassard in 1984 — is the original quantum
+          <b>key-distribution</b> protocol. Two parties build a shared secret key by sending
+          single qubits over a quantum channel. Any eavesdropper who tries to listen
+          <i>must</i> disturb the qubits, leaving statistical fingerprints in the key.</p>
+        <p class="muted"><b>Encoding rule:</b> Alice picks a random bit and a random basis.
+          Z-basis (<i>rectilinear</i>) encodes 0 → |0⟩, 1 → |1⟩.
+          X-basis (<i>diagonal</i>) encodes 0 → |+⟩, 1 → |−⟩.
+          Bob measures in his own random basis, then they keep only the bits where their bases matched.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>Try it · BB84 protocol</h3>
+        <div class="bb-controls">
+          <div>
+            <label>Bits to send: <b><span id="bb-n-v">16</span></b></label>
+            <input type="range" min="8" max="40" value="16" id="bb-n" class="slider"/>
+          </div>
+          <label class="bb-eve-toggle">
+            <input type="checkbox" id="bb-eve"/> Eve is eavesdropping
+          </label>
+        </div>
+        <div class="row-buttons">
+          <button id="bb-run" class="primary-btn">Run protocol</button>
+        </div>
+
+        <div class="bb-table" id="bb-table"></div>
+
+        <div class="bb-summary" id="bb-summary"></div>
+      </div>
+    </section>
+
+    <!-- =================== GLOSSARY =================== -->
+    <section class="module" id="glossary">
+      <div class="card lesson">
+        <h2>Glossary</h2>
+        <div id="glossary-list" class="glossary-list"></div>
+      </div>
+    </section>
+
+    <!-- =================== FAQ =================== -->
+    <section class="module" id="faq">
+      <div class="card lesson">
+        <h2>Beginner FAQ</h2>
+        <div id="faq-list"></div>
+      </div>
+    </section>
+
+    <!-- =================== CHALLENGE =================== -->
+    <section class="module" id="challenge">
+      <div class="card lesson">
+        <h2>🏆 Final Quantum Challenge</h2>
+        <p id="challenge-status" class="muted">Complete at least 6 modules to unlock the challenge.</p>
+        <div id="challenge-area"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <aside class="right-panel">
+    <div class="card">
+      <h3>Badges</h3>
+      <div class="badges" id="badges"></div>
+    </div>
+    <div class="card">
+      <h3>Quick Glossary</h3>
+      <div id="quick-glossary" class="quick-glossary"></div>
+    </div>
+    <div class="card">
+      <h3>Score</h3>
+      <p class="score-line">Total: <b id="total-score">0</b> pts</p>
+    </div>
+  </aside>
+
+</div>
+
+<footer>
+  <p>QuantumLab Beginner · Built with HTML, CSS &amp; vanilla JS · No backend, your progress lives in this browser.</p>
+  <p>Powered by <a href="https://www.tertiarycourses.com.sg/" target="_blank" rel="noopener noreferrer">Tertiary Infotech Academy Pte Ltd</a></p>
+</footer>
+
+<div id="toast" class="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
