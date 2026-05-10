@@ -1762,7 +1762,10 @@ function initCircuits(){
           : `Control set on q${q}. Now drop the CNOT button on (or click) the TARGET wire.`);
       } else {
         if(pending.qubits[0] === pending.qubits[1]){
-          setHint('The two qubits must be different. Pick again.');
+          const otherWire = pending.qubits[0] === 0 ? 'q1' : 'q0';
+          setHint(t === 'CNOT'
+            ? `That's the same wire as the control. CNOT acts BETWEEN two qubits — control on one wire, target on a DIFFERENT wire. Try ${otherWire}.`
+            : `CZ acts BETWEEN two different qubits. Pick a different wire — try ${otherWire}.`);
           pending.qubits.pop();
           return;
         }
