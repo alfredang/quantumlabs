@@ -1758,8 +1758,8 @@ function initCircuits(){
       pending.qubits.push(q);
       if(pending.qubits.length === 1){
         setHint(t === 'CZ'
-          ? `First qubit set on q${q}. Now click the second wire (CZ is symmetric).`
-          : `Control set on q${q}. Now click the TARGET wire.`);
+          ? `First qubit set on q${q}. Now drop the CZ button on (or click) the second wire — CZ is symmetric.`
+          : `Control set on q${q}. Now drop the CNOT button on (or click) the TARGET wire.`);
       } else {
         if(pending.qubits[0] === pending.qubits[1]){
           setHint('The two qubits must be different. Pick again.');

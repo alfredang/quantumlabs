@@ -1157,7 +1157,9 @@ p{margin:.4em 0}
   height:3px;
 }
 .qwire.drag-over{
-  background:rgba(6,182,212,.06);border-radius:8px;
+  background:rgba(6,182,212,.10);border-radius:8px;
+  outline:1px dashed var(--accent-2);
+  outline-offset:-2px;
 }
 
 .qubit-controls{display:flex;gap:6px;align-items:center;background:var(--surface-2);padding:6px 10px;border-radius:10px;border:1px solid var(--border)}
@@ -1185,7 +1187,7 @@ p{margin:.4em 0}
 .cell.tail{flex:1;min-width:62px;color:var(--muted);font-size:1.2rem;cursor:default}
 .cell.tail.armed{cursor:crosshair;color:var(--accent-2)}
 .cell.tail.armed::after{
-  content:"+ click";font-size:.75rem;color:var(--accent-2);
+  content:"+ drop or click";font-size:.75rem;color:var(--accent-2);
   border:1px dashed var(--accent-2);border-radius:6px;padding:3px 8px;
   background:rgba(6,182,212,.08);
 }
