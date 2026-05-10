@@ -778,6 +778,7 @@
         <h3>Pick a paradox</h3>
         <div class="paradox-tabs">
           <button class="pdx-tab active" data-pdx="cat">🐱 Schrödinger's Cat</button>
+          <button class="pdx-tab" data-pdx="duality">🌊 Double-Slit</button>
           <button class="pdx-tab" data-pdx="wigner">👤 Wigner's Friend</button>
           <button class="pdx-tab" data-pdx="frauch">👥 Friend-of-Friend</button>
           <button class="pdx-tab" data-pdx="eraser">🚪 Quantum Eraser</button>
@@ -813,6 +814,66 @@
           <p class="muted"><b>The puzzle:</b> standard QM says superposition continues until
             <i>measurement</i>. But cats, geiger counters, and poison are macroscopic. Where exactly
             does the line between quantum-blurry and classically-definite reality live?</p>
+        </div>
+
+        <!-- Double-Slit / Wave-Particle Duality -->
+        <div class="pdx-panel hidden" id="pdx-duality">
+          <h4>Double-Slit Experiment — Wave-Particle Duality</h4>
+          <p>Send single photons (or electrons) one at a time through a barrier with two slits.
+            Over many shots they build up an <b>interference pattern</b> — as if each one went
+            through <i>both</i> slits as a wave. Now place a detector on slit A to peek at
+            <i>which</i> slit the photon went through. The interference pattern <b>vanishes</b>:
+            the photon behaves as a particle. You can have wave behavior or path information,
+            never both.</p>
+
+          <svg class="paradox-svg" viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
+            <!-- Source -->
+            <rect x="10" y="100" width="60" height="30" rx="4" fill="#ef4444"/>
+            <text x="40" y="120" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">SOURCE</text>
+            <!-- Photon beam -->
+            <line x1="70" y1="115" x2="200" y2="115" stroke="#fbbf24" stroke-width="2"/>
+            <text x="100" y="105" fill="#fbbf24" font-size="9">single photon</text>
+            <!-- Slit barrier -->
+            <rect x="200" y="20" width="6" height="65" fill="#64748b"/>
+            <rect x="200" y="92" width="6" height="6" fill="#64748b"/>
+            <rect x="200" y="105" width="6" height="20" fill="#64748b"/>
+            <rect x="200" y="132" width="6" height="6" fill="#64748b"/>
+            <rect x="200" y="145" width="6" height="55" fill="#64748b"/>
+            <text x="170" y="98" fill="#94a3b8" font-size="10">slit A</text>
+            <text x="170" y="142" fill="#94a3b8" font-size="10">slit B</text>
+            <!-- Two paths -->
+            <path d="M205,95 Q400,40 580,40" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="4 3" fill="none" opacity="0.75"/>
+            <path d="M205,140 Q400,190 580,190" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="4 3" fill="none" opacity="0.75"/>
+            <!-- Detector overlay (toggleable) -->
+            <g id="ds-det-icon" class="ds-detector-overlay">
+              <rect x="240" y="62" width="76" height="22" rx="4" fill="rgba(245,158,11,0.18)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3 2"/>
+              <text x="278" y="77" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="600">👁 detector</text>
+              <text x="278" y="56" text-anchor="middle" fill="#f59e0b" font-size="9">on slit A</text>
+            </g>
+            <!-- Screen -->
+            <line x1="580" y1="20" x2="580" y2="200" stroke="#a855f7" stroke-width="3"/>
+            <text x="600" y="115" fill="#a855f7" font-size="11">screen</text>
+            <!-- Pattern dots -->
+            <g fill="#a855f7" opacity="0.85">
+              <circle cx="588" cy="40"  r="1.5"/>
+              <circle cx="592" cy="60"  r="3"/>
+              <circle cx="588" cy="80"  r="1.5"/>
+              <circle cx="592" cy="100" r="3.5"/>
+              <circle cx="588" cy="120" r="1.5"/>
+              <circle cx="592" cy="140" r="3.5"/>
+              <circle cx="588" cy="160" r="1.5"/>
+              <circle cx="592" cy="180" r="3"/>
+            </g>
+          </svg>
+
+          <div class="er-controls">
+            <label class="er-toggle"><input type="checkbox" id="ds-detector"/> Detector on slit A</label>
+            <button id="ds-shoot1" class="primary-btn">Send 1 photon</button>
+            <button id="ds-shootN" class="primary-btn">Send 200 photons</button>
+            <button id="ds-clear" class="ghost-btn">Clear screen</button>
+          </div>
+          <canvas id="ds-screen" height="180"></canvas>
+          <p id="ds-msg" class="muted">No photons yet — click "Send" to fire one. With the detector OFF the screen builds an interference pattern; with it ON, two clumps.</p>
         </div>
 
         <!-- Wigner's Friend -->

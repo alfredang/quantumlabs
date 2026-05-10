@@ -565,6 +565,14 @@ p{margin:.4em 0}
 }
 .paradox-svg text{font-family:'Inter',system-ui,sans-serif}
 
+/* — Double-Slit (Wave-Particle Duality) — */
+.ds-detector-overlay{opacity:.25;transition:opacity .3s}
+.ds-detector-overlay.active{opacity:1;filter:drop-shadow(0 0 6px rgba(245,158,11,.6))}
+#ds-screen{
+  width:100%;display:block;background:var(--bg-2);border-radius:10px;
+  border:1px solid var(--border);margin-top:8px;
+}
+
 /* — Quantum Eraser — */
 .er-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
 .er-toggle{

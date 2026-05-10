@@ -845,6 +845,97 @@ function initParadox(){
     setState(0);
   })();
 
+  // -------- Double-Slit (Wave-Particle Duality) --------
+  (() => {
+    const detEl = document.getElementById('ds-detector');
+    const cv    = document.getElementById('ds-screen');
+    const msg   = document.getElementById('ds-msg');
+    const icon  = document.getElementById('ds-det-icon');
+    if(!cv) return;
+    const ctx   = cv.getContext('2d');
+    let hits = [];
+
+    function clear(){
+      hits = []; draw();
+      msg.textContent = 'Screen cleared. Click "Send" to fire photons.';
+    }
+
+    function draw(){
+      const w = cv.width = cv.clientWidth, h = cv.height;
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle = 'rgba(168,85,247,.04)';
+      ctx.fillRect(0,0,w,h);
+      // Histogram
+      const BINS = 64;
+      const bins = new Array(BINS).fill(0);
+      hits.forEach(p => bins[Math.min(BINS-1, Math.max(0, Math.floor(p.x*BINS)))]++);
+      const max = Math.max(1, ...bins);
+      const bw = w / BINS;
+      ctx.fillStyle = 'rgba(124,58,237,.55)';
+      bins.forEach((c, i) => {
+        const bh = (c/max) * (h * 0.5);
+        ctx.fillRect(i*bw, h - bh, bw - 0.5, bh);
+      });
+      // Individual photon dots in the upper band
+      ctx.fillStyle = 'rgba(168,85,247,.95)';
+      hits.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x*w, p.y, 2, 0, Math.PI*2);
+        ctx.fill();
+      });
+      // Top label
+      ctx.fillStyle = '#8b93a7';
+      ctx.font = '11px system-ui';
+      ctx.fillText(`${hits.length} photon${hits.length===1?'':'s'}`, 10, 16);
+    }
+
+    function sample(detector){
+      // Photon-screen position x ∈ [0,1].
+      if(!detector){
+        // Wave behaviour: cos²(5πx) interference pattern (rejection sampling).
+        for(let i=0;i<200;i++){
+          const x = Math.random();
+          if(Math.random() < Math.cos(5*Math.PI*x)**2) return x;
+        }
+        return Math.random();
+      } else {
+        // Particle behaviour: 50/50 between two slit-centred Gaussians.
+        const slit = Math.random() < 0.5 ? 0.35 : 0.65;
+        const g = slit + (Math.random()+Math.random()+Math.random()-1.5) * 0.07;
+        return Math.min(0.99, Math.max(0.01, g));
+      }
+    }
+
+    function shoot(n){
+      const det = detEl.checked;
+      const h = cv.height;
+      for(let i=0;i<n;i++){
+        const x = sample(det);
+        const y = h*0.18 + Math.random() * (h*0.25);
+        hits.push({x, y});
+      }
+      draw();
+      const total = hits.length;
+      msg.innerHTML = det
+        ? `Sent ${n} photon${n===1?'':'s'} with detector ON (slit A peek). After ${total} total → <b>two clumps</b> from each slit. No interference. Photons act as <b>particles</b>.`
+        : `Sent ${n} photon${n===1?'':'s'} with detector OFF. After ${total} total → <b>interference fringes</b> appear (cos² pattern). Each photon interfered with itself as a <b>wave</b>.`;
+    }
+
+    document.getElementById('ds-shoot1').onclick  = () => shoot(1);
+    document.getElementById('ds-shootN').onclick  = () => shoot(200);
+    document.getElementById('ds-clear').onclick   = clear;
+
+    detEl.onchange = () => {
+      icon.classList.toggle('active', detEl.checked);
+      msg.innerHTML = detEl.checked
+        ? '👁 Detector ON — measuring which slit forces the photon to act as a particle. Existing screen data preserved; new photons will land in two clumps.'
+        : '🌊 Detector OFF — no path measurement. Photons interfere with themselves and build a wave pattern.';
+    };
+
+    window.addEventListener('resize', draw);
+    clear();
+  })();
+
   // -------- Quantum Eraser --------
   (() => {
     const detEl = document.getElementById('er-detector');
