@@ -35,6 +35,7 @@
     <ul class="nav-list">
       <li><a href="#math">📐 Math Prerequisites</a></li>
       <li><a href="#postulates">📜 QM Postulates</a></li>
+      <li><a href="#history">🕰 History of QM</a></li>
       <li><a href="#qubits"        data-mod="qubits">⚛  Qubits</a></li>
       <li><a href="#bloch">🌐 Bloch Sphere</a></li>
       <li><a href="#superposition" data-mod="superposition">🌊 Superposition</a></li>
@@ -249,6 +250,192 @@
           with Born-rule probability, ⑤ the state collapses to that eigenvector. Everything
           else — entanglement, interference, teleportation, error correction — emerges from
           how those five steps interact.</p>
+      </div>
+    </section>
+
+    <!-- =================== HISTORY OF QM =================== -->
+    <section class="module" id="history">
+      <div class="card lesson">
+        <h2>History of Quantum Mechanics</h2>
+        <p>From a "desperate fix" to the blackbody-radiation puzzle in 1900, to a complete
+          relativistic theory in 1928 — the foundations of quantum mechanics were laid in
+          just three decades. Every name on the timeline below earned a Nobel Prize for
+          this work.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>Timeline · 1900 → 1928</h3>
+        <div class="qm-timeline">
+
+          <div class="qm-event">
+            <span class="qm-year">1900</span>
+            <h4>Planck — quantization of blackbody radiation</h4>
+            <p class="qm-people">Max Planck · Berlin</p>
+            <p>To explain the spectrum of light emitted by a hot body, Planck assumed
+              the energy of an oscillator can only take discrete values <i>E = nhν</i>.
+              He called it an "act of desperation" — but it introduced the constant
+              <i>h</i> that would define the quantum world. <b>Nobel Prize 1918.</b></p>
+            <div class="qm-formula">E = h · ν,  &nbsp; h ≈ 6.626 × 10<sup>−34</sup> J·s</div>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1905</span>
+            <h4>Einstein — light quanta &amp; the photoelectric effect</h4>
+            <p class="qm-people">Albert Einstein · Bern</p>
+            <p>In one of his "annus mirabilis" papers, Einstein argued that light itself
+              comes in discrete packets — <b>photons</b> — to explain why the photoelectric
+              effect depends on a light's frequency, not its intensity. The result earned
+              him the <b>Nobel Prize in 1921</b> (relativity was still controversial).</p>
+            <div class="qm-formula">E<sub>photon</sub> = h · ν</div>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1911</span>
+            <h4>Rutherford — the nuclear atom</h4>
+            <p class="qm-people">Ernest Rutherford · Manchester  (gold-foil experiment by Geiger &amp; Marsden, 1909)</p>
+            <p>Alpha particles fired at thin gold foil mostly passed through, but a few
+              bounced sharply backward. Rutherford concluded the atom is mostly empty
+              space with a tiny dense nucleus. Classically, accelerating electrons in
+              orbit should radiate energy and spiral in — but they don't. The atom was
+              unstable on paper and clearly stable in reality.</p>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1913</span>
+            <h4>Bohr — quantized atomic orbits</h4>
+            <p class="qm-people">Niels Bohr · Copenhagen</p>
+            <p>Bohr postulated that electrons orbit only at specific, quantized energies
+              and emit/absorb a photon when jumping between levels. The model predicted
+              hydrogen's spectral lines exactly. The first explicit "quantum jump".
+              <b>Nobel Prize 1922.</b></p>
+            <div class="qm-formula">L = nℏ,    &nbsp;&nbsp; E<sub>n</sub> = − 13.6 eV / n²  &nbsp;(hydrogen)</div>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1922</span>
+            <h4>Stern–Gerlach — discovery of spin</h4>
+            <p class="qm-people">Otto Stern &amp; Walther Gerlach · Frankfurt</p>
+            <p>A beam of silver atoms passed through an inhomogeneous magnetic field
+              split into <b>exactly two</b> beams — direct evidence that angular momentum
+              is quantized in two values. Later understood as electron spin ±ℏ/2 — there
+              is no classical analogue. <b>Stern: Nobel 1943.</b></p>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1924</span>
+            <h4>de Broglie — matter waves</h4>
+            <p class="qm-people">Louis de Broglie · Paris (PhD thesis, "Recherches sur la théorie des quanta")</p>
+            <p>If light has both wave &amp; particle aspects, why not matter? de Broglie
+              proposed every particle has an associated wavelength λ = h/p. Wave-particle
+              duality applies to electrons too. Confirmed in 1927 by the Davisson–Germer
+              electron-diffraction experiment. <b>Nobel Prize 1929.</b></p>
+            <div class="qm-formula">λ = h / p</div>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1925<br><small>June</small></span>
+            <h4>Heisenberg — the Helgoland "one-man" paper</h4>
+            <p class="qm-people">Werner Heisenberg · Helgoland (recovering from hay fever, alone on the island)</p>
+            <p>Heisenberg gave up trying to picture electron orbits and worked only with
+              <i>observable</i> quantities — transition amplitudes between energy levels.
+              The mathematics he invented turned out to be matrix multiplication, though
+              he didn't know that yet. Title: "Quantum-theoretical re-interpretation of
+              kinematic and mechanical relations".</p>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1925<br><small>Sept</small></span>
+            <h4>Born &amp; Jordan — the "two-man" paper</h4>
+            <p class="qm-people">Max Born &amp; Pascual Jordan · Göttingen</p>
+            <p>Born recognised Heisenberg's arrays of numbers as <b>matrices</b> and, with
+              his student Jordan, formalised the theory. They wrote down the canonical
+              commutation relation [x̂, p̂] = iℏ — the algebraic signature of quantum
+              non-commutativity, the heart of the uncertainty principle.</p>
+            <div class="qm-formula">[ x̂, p̂ ] = iℏ</div>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1925<br><small>Nov</small></span>
+            <h4>Born–Heisenberg–Jordan — the "three-man" paper</h4>
+            <p class="qm-people">Born, Heisenberg, Jordan · Göttingen</p>
+            <p>The complete matrix-mechanics framework: <i>Zur Quantenmechanik II</i>. The
+              first internally consistent quantum theory. Heisenberg got the <b>Nobel in
+              1932</b>; Born had to wait until <b>1954</b>.</p>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1926</span>
+            <h4>Schrödinger — wave mechanics</h4>
+            <p class="qm-people">Erwin Schrödinger · Zurich</p>
+            <p>Inspired by de Broglie, Schrödinger wrote down a wave equation for the
+              electron. Solving it for hydrogen reproduced Bohr's spectrum naturally,
+              with no quantization assumption. Within months he also proved that <i>his</i>
+              wave mechanics and <i>Heisenberg's</i> matrix mechanics are mathematically
+              equivalent. <b>Nobel Prize 1933 (shared with Dirac).</b></p>
+            <div class="qm-formula">iℏ · ∂ψ / ∂t  =  Ĥ ψ</div>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1926</span>
+            <h4>Born — probability interpretation</h4>
+            <p class="qm-people">Max Born · Göttingen</p>
+            <p>Born proposed that |ψ(x)|² is the <b>probability density</b> for finding
+              a particle at position x. Probabilistic outcomes become a fundamental
+              feature of nature, not a symptom of incomplete knowledge — an idea Einstein
+              never fully accepted ("God does not play dice"). <b>Nobel Prize 1954.</b></p>
+            <div class="qm-formula">P(x) = | ψ(x) |²</div>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1927</span>
+            <h4>Heisenberg — uncertainty principle</h4>
+            <p class="qm-people">Werner Heisenberg · Copenhagen</p>
+            <p>A direct consequence of [x̂, p̂] = iℏ: position and momentum can never both
+              be measured to arbitrary precision. The closer you pin one down, the more
+              uncertain the other becomes.</p>
+            <div class="qm-formula">Δx · Δp ≥ ℏ / 2</div>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1927</span>
+            <h4>Dirac — transformation theory unifies wave &amp; matrix mechanics</h4>
+            <p class="qm-people">Paul Dirac · Cambridge</p>
+            <p>Schrödinger had already shown the two formulations were mathematically
+              equivalent. Dirac went deeper: his <b>transformation theory</b> exhibited
+              both as different "representations" of a single underlying algebraic
+              theory. The modern bra-ket notation (⟨φ|, |ψ⟩) traces back to this work.</p>
+          </div>
+
+          <div class="qm-event">
+            <span class="qm-year">1928</span>
+            <h4>Dirac equation — relativistic QM &amp; antimatter</h4>
+            <p class="qm-people">Paul Dirac · Cambridge</p>
+            <p>By combining quantum mechanics with special relativity, Dirac arrived at a
+              first-order wave equation for the electron. It produced electron <b>spin-½
+              automatically</b> and predicted negative-energy solutions — interpreted as
+              <b>antimatter</b>. The positron was discovered by Anderson in 1932,
+              confirming the prediction. <b>Nobel Prize 1933 (shared with Schrödinger).</b></p>
+            <div class="qm-formula">( iℏ γ<sup>μ</sup> ∂<sub>μ</sub> − mc ) ψ = 0</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card lesson">
+        <h3>And after the founding era…</h3>
+        <ul style="line-height:1.8">
+          <li><b>1932</b> — Anderson detects the positron, vindicating Dirac. von Neumann
+            publishes <i>Mathematical Foundations of Quantum Mechanics</i> (Hilbert spaces, projective measurement).</li>
+          <li><b>1935</b> — EPR paradox (Einstein, Podolsky, Rosen) and Schrödinger's cat.
+            The interpretation debates begin in earnest.</li>
+          <li><b>1948</b> — Feynman's path-integral formulation.</li>
+          <li><b>1964</b> — Bell's theorem: local hidden variables are testable, and quantum mechanics violates them. (See <a href="#bell">Bell's Inequality</a>.)</li>
+          <li><b>1981–82</b> — Aspect's experiments confirm Bell's inequality is violated in nature.</li>
+          <li><b>1980s+</b> — Feynman, Deutsch &amp; others propose quantum computers.</li>
+          <li><b>1994</b> — Shor's algorithm. <b>1996</b> — Grover's algorithm.</li>
+          <li><b>2019</b> — Google claims "quantum supremacy" with the 53-qubit Sycamore.</li>
+          <li><b>2022</b> — Aspect, Clauser &amp; Zeilinger share the Nobel Prize for their Bell-test experiments.</li>
+        </ul>
       </div>
     </section>
 

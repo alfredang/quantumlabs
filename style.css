@@ -436,6 +436,71 @@ p{margin:.4em 0}
 /* In tight contexts (amplitude column rows) keep fractions even tighter. */
 .sv-row .sv-amp .frac{font-size:.78em;top:0}
 
+/* ===================== HISTORY OF QM TIMELINE ===================== */
+.qm-timeline{
+  position:relative;padding:8px 0 8px 64px;
+}
+.qm-timeline::before{
+  content:"";position:absolute;left:24px;top:14px;bottom:14px;width:3px;
+  background:linear-gradient(180deg,var(--accent) 0%,var(--accent-2) 50%,var(--accent-3) 100%);
+  border-radius:99px;opacity:.7;
+}
+.qm-event{
+  position:relative;margin-bottom:18px;
+  padding:14px 18px;
+  background:var(--surface-2);
+  border:1px solid var(--border);border-radius:10px;
+  transition:transform .2s,border-color .2s;
+}
+.qm-event:hover{
+  transform:translateX(3px);
+  border-color:var(--accent-2);
+}
+.qm-event::before{
+  content:"";position:absolute;left:-46px;top:18px;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--accent);
+  border:3px solid var(--bg);
+  box-shadow:0 0 14px var(--accent),0 0 0 4px rgba(124,58,237,.18);
+  z-index:2;
+}
+.qm-event h4{
+  font-size:1.05rem;color:var(--text);margin:0 0 4px;
+  display:inline-block;
+}
+.qm-year{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;font-weight:700;
+  background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(6,182,212,.14));
+  color:var(--accent-2);
+  padding:4px 10px;border-radius:6px;
+  margin-right:10px;font-size:.95rem;
+  border:1px solid rgba(6,182,212,.25);
+  vertical-align:middle;line-height:1.1;text-align:center;
+}
+.qm-year small{
+  display:block;font-size:.65rem;font-weight:500;opacity:.75;
+  letter-spacing:.04em;margin-top:1px;
+}
+.qm-people{
+  font-size:.82rem;color:var(--accent-3);margin:2px 0 8px;
+  font-style:italic;
+}
+.qm-event p{font-size:.92rem;line-height:1.6;color:var(--text)}
+.qm-formula{
+  display:inline-block;margin-top:8px;
+  padding:6px 12px;border-radius:6px;
+  background:var(--bg-2);border:1px solid var(--border);
+  font-family:'STIX Two Math','Cambria Math','Times New Roman',serif;
+  font-size:1.02rem;color:var(--text);
+}
+.qm-formula sub, .qm-formula sup{font-size:.75em}
+@media(max-width:600px){
+  .qm-timeline{padding-left:42px}
+  .qm-timeline::before{left:14px}
+  .qm-event::before{left:-32px;width:14px;height:14px}
+}
+
 /* ===================== MATH / POSTULATES (LaTeX-like) ===================== */
 .math-row{
   display:flex;flex-wrap:wrap;gap:14px;align-items:center;
