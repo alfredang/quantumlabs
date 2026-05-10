@@ -3,7 +3,7 @@
    ========================================================= */
 (() => {
 
-const MODULES = ['qubits','superposition','entanglement','measurement','circuits','algorithms','noise','qec'];
+const MODULES = ['qubits','measurement','superposition','entanglement','circuits','algorithms','noise','qec'];
 const STORAGE_KEY = 'quantumlab.progress.v1';
 
 // ---------- Persistent state ----------
