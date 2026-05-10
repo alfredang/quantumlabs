@@ -49,6 +49,7 @@
       <li><a href="#paradox">🌀 Quantum Paradoxes</a></li>
       <li><a href="#crypto">🔐 Quantum Cryptography</a></li>
       <li><a href="#pqc">🔒 Post-Quantum Security</a></li>
+      <li><a href="#qinfo">📡 Quantum Information</a></li>
       <li><a href="#noise"         data-mod="noise">📡 Noise</a></li>
       <li><a href="#qec"           data-mod="qec">🛡 Quantum Error Correction</a></li>
     </ul>
@@ -806,6 +807,153 @@
         </div>
 
         <div class="kb-verdict" id="kb-verdict"></div>
+      </div>
+    </section>
+
+    <!-- =================== QUANTUM INFORMATION =================== -->
+    <section class="module" id="qinfo">
+      <div class="card lesson">
+        <h2>Quantum Information</h2>
+        <p>The marriage of quantum mechanics with Shannon's information theory. Where classical
+          information counts <b>bits</b>, quantum information counts <b>qubits</b>, <b>cbits</b>
+          (classical bits transmitted), and <b>ebits</b> (Bell pairs as a resource) — and asks
+          how they convert into each other.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>1 · Bit vs Qubit</h3>
+        <p>A classical bit is one of two definite values. A qubit is a complex unit vector in
+          a 2-dimensional Hilbert space — a continuum of possibilities. But here's the catch:
+          <b>you can only extract one classical bit per qubit measurement</b>.</p>
+        <table class="qc-table">
+          <thead><tr><th></th><th>Classical bit</th><th>Qubit</th></tr></thead>
+          <tbody>
+            <tr><td><b>State space</b></td><td>{0, 1} — two values</td><td>S² (Bloch sphere) — continuum</td></tr>
+            <tr><td><b>Holds</b></td><td>1 bit of info</td><td>2 real parameters (θ, φ) — but only ~1 cbit accessible</td></tr>
+            <tr><td><b>Copyable?</b></td><td>Yes (trivially)</td><td>No — <i>no-cloning theorem</i></td></tr>
+            <tr><td><b>Measurement</b></td><td>Returns its value</td><td>Probabilistic; collapses the state</td></tr>
+            <tr><td><b>Composition (n)</b></td><td>2ⁿ states, n bits</td><td>2ⁿ-dim Hilbert space, exponentially many amplitudes</td></tr>
+          </tbody>
+        </table>
+        <p class="muted">⚠ <b>Holevo bound (1973).</b> A single qubit transmits at most 1 cbit
+          of classical info. The exponentially-large state space is real, but most of it is
+          inaccessible to a measurement.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>2 · Density matrix — the universal state representation</h3>
+        <p>Kets |ψ⟩ describe <b>pure</b> states only — perfectly known wavefunctions. Real
+          systems are often <b>mixed</b>: probabilistic ensembles of pure states (from noise,
+          tracing out an environment, or a partial measurement). The <b>density matrix</b> ρ
+          handles both uniformly.</p>
+        <div class="math-formula">ρ = Σᵢ pᵢ |ψᵢ⟩⟨ψᵢ|, &nbsp; Tr(ρ) = 1, &nbsp; ρ ≥ 0</div>
+        <ul style="line-height:1.7">
+          <li><b>Pure state</b>: ρ = |ψ⟩⟨ψ|, &nbsp; Tr(ρ²) = 1</li>
+          <li><b>Mixed state</b>: ρ = Σ pᵢ |ψᵢ⟩⟨ψᵢ|, &nbsp; Tr(ρ²) &lt; 1</li>
+          <li><b>Maximally mixed</b>: ρ = I/d, &nbsp; "no information" — measurements look uniform</li>
+        </ul>
+        <p>For a composite system AB in a joint state ρ<sub>AB</sub>, Alice's local view is
+          obtained by the <b>partial trace</b> ρ<sub>A</sub> = Tr<sub>B</sub>(ρ<sub>AB</sub>).
+          For an entangled pure state ρ<sub>AB</sub> = |ψ⟩⟨ψ|, the partial trace ρ<sub>A</sub>
+          is generally <i>mixed</i> — the entanglement appears as local randomness.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>3 · Von Neumann entropy</h3>
+        <p>The quantum analog of Shannon entropy:</p>
+        <div class="math-formula">S(ρ) = −Tr(ρ log₂ ρ) = −Σᵢ λᵢ log₂ λᵢ</div>
+        <p>where λᵢ are the eigenvalues of ρ. Properties:</p>
+        <ul style="line-height:1.7">
+          <li><b>Pure state</b>: S(|ψ⟩⟨ψ|) = <b>0</b> — perfect knowledge.</li>
+          <li><b>Maximally mixed</b>: S(I/d) = <b>log₂ d</b> — total ignorance.</li>
+          <li><b>Bell pair</b> |Φ⁺⟩: S(ρ<sub>AB</sub>) = 0 (joint pure) but S(ρ<sub>A</sub>) = <b>1 ebit</b>.
+            That gap <i>is</i> the entanglement.</li>
+          <li><b>Subadditivity</b>: S(ρ<sub>AB</sub>) ≤ S(ρ<sub>A</sub>) + S(ρ<sub>B</sub>) — quantum
+            correlations <i>reduce</i> joint entropy below the sum of parts (the opposite is impossible
+            classically).</li>
+        </ul>
+      </div>
+
+      <div class="card try-it">
+        <h3>4 · No-cloning theorem (Wootters &amp; Zurek, 1982; Dieks, 1982)</h3>
+        <p>There is <b>no</b> unitary operator U on a 2-qubit system that maps |ψ⟩|0⟩ → |ψ⟩|ψ⟩
+          for every input state |ψ⟩.</p>
+        <div class="math-formula">∄ U  &nbsp;such that&nbsp;  U|ψ⟩|0⟩ = |ψ⟩|ψ⟩  ∀ |ψ⟩</div>
+        <p><b>Proof sketch.</b> Suppose U exists. For two states |ψ⟩, |φ⟩, take the inner product
+          of both sides of U|ψ⟩|0⟩ = |ψ⟩|ψ⟩ and U|φ⟩|0⟩ = |φ⟩|φ⟩. Unitarity preserves inner
+          products, so ⟨ψ|φ⟩ = ⟨ψ|φ⟩². The only solutions are 0 and 1 — meaning |ψ⟩ and |φ⟩
+          must be orthogonal or identical. Cloning works for those, but not for arbitrary
+          states. Quantum information is <b>fundamentally uncopyable</b>.</p>
+        <p class="muted">Consequences: QKD security (Eve cannot copy intercepted qubits),
+          no perfect quantum amplifiers, no faster-than-light signalling via entanglement,
+          quantum money (Wiesner 1969 → BB84 1984).</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>5 · The quantum-information conversion table</h3>
+        <p>Three resources interconvert: <b>qubits</b> sent over a quantum channel, <b>cbits</b>
+          sent over a classical channel, and <b>ebits</b> shared as entangled Bell pairs.</p>
+        <table class="qc-table">
+          <thead><tr><th>Protocol</th><th>You give up</th><th>You get</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>Quantum teleportation</b><br><small>(see <a href="#algorithms">Algorithms</a>)</small></td>
+              <td>1 ebit + 2 cbits</td>
+              <td>1 qubit (state transferred)</td>
+            </tr>
+            <tr>
+              <td><b>Superdense coding</b><br><small>(Bennett &amp; Wiesner, 1992)</small></td>
+              <td>1 ebit + 1 qubit</td>
+              <td>2 cbits transmitted</td>
+            </tr>
+            <tr>
+              <td><b>Entanglement swapping</b></td>
+              <td>2 ebits + 2 cbits</td>
+              <td>1 ebit between distant parties</td>
+            </tr>
+            <tr>
+              <td><b>Entanglement distillation</b></td>
+              <td>n noisy ebits + LOCC</td>
+              <td>k &lt; n high-fidelity ebits</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="muted">Together, teleportation + superdense coding say that 1 qubit ≡ 2 cbits
+          + 1 ebit and 2 cbits ≡ 1 qubit + 1 ebit — consistent only because <b>entanglement
+          alone cannot send classical information</b> (no-signalling theorem).</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>6 · Quantum channels</h3>
+        <p>A quantum channel ℰ is a <b>completely-positive trace-preserving (CPTP)</b> map
+          from density matrices to density matrices. It generalises classical noisy channels.
+          Common examples on a single qubit:</p>
+        <table class="qc-table">
+          <thead><tr><th>Channel</th><th>Effect</th><th>Models</th></tr></thead>
+          <tbody>
+            <tr><td><b>Depolarising</b></td><td>ρ → (1−p)ρ + p·I/2</td><td>Random Pauli noise</td></tr>
+            <tr><td><b>Bit-flip</b></td><td>ρ → (1−p)ρ + p·XρX</td><td>Classical-style flips (see <a href="#noise">Noise</a>)</td></tr>
+            <tr><td><b>Phase-flip</b></td><td>ρ → (1−p)ρ + p·ZρZ</td><td>Decoherence in the Z basis</td></tr>
+            <tr><td><b>Amplitude damping</b></td><td>ρ → ρ' (energy loss to environment)</td><td>Spontaneous emission, T₁ relaxation</td></tr>
+            <tr><td><b>Phase damping</b></td><td>ρ → ρ' (off-diagonals shrink)</td><td>Pure dephasing, T₂ relaxation</td></tr>
+          </tbody>
+        </table>
+        <p>Channels have multiple <b>capacities</b>: the classical capacity (cbits per use), the
+          quantum capacity (qubits per use), the entanglement-assisted capacity, the private
+          capacity. Unlike classical channels, these are different numbers, and computing
+          them exactly remains a major open problem.</p>
+      </div>
+
+      <div class="card lesson">
+        <h3>Why this matters</h3>
+        <p class="muted">Quantum information theory is the rulebook for everything else in
+          this lab. <b>Holevo</b> says encryption keys carried by qubits are not magically
+          larger. <b>No-cloning</b> is why <a href="#crypto">QKD</a> is secure. <b>Density
+          matrices</b> are how you describe a noisy qubit going through a noisy
+          <a href="#noise">channel</a>. <b>Channel capacities</b> are the ultimate yardstick
+          for <a href="#qec">error correction</a>. And the <b>resource conversions</b> at the
+          heart of teleportation and superdense coding are why entanglement is treated as a
+          tradable currency in modern quantum networking.</p>
       </div>
     </section>
 
