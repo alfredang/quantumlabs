@@ -1693,16 +1693,26 @@ function initCircuits(){
           if(q > lo && q < hi) cell.classList.add('cnot-line');
         } else if(op.qubits.includes(q)){
           cell.classList.add('gate-cell');
-          let label = op.type;
-          if(op.params && op.params.angle !== undefined){
-            label = `${op.type}(${formatPi(op.params.angle)})`;
-          }
           const box = document.createElement('div');
           box.className = 'gate-box';
           const isRot = ['Rx','Ry','Rz'].includes(op.type);
           if(isRot) box.classList.add('rot');
           if(op.type === 'M') box.classList.add('meas');
-          box.textContent = label;
+
+          if(isRot && op.params && op.params.angle !== undefined){
+            // IBM-Composer-style two-line layout: gate name on top, angle below.
+            const nameEl = document.createElement('span');
+            nameEl.className = 'gate-name';
+            nameEl.textContent = op.type;
+            const angleEl = document.createElement('span');
+            angleEl.className = 'gate-angle';
+            angleEl.textContent = '(' + formatPi(op.params.angle) + ')';
+            box.appendChild(nameEl);
+            box.appendChild(angleEl);
+          } else {
+            box.textContent = op.type;
+          }
+
           box.title = isRot ? 'Click to remove · Right-click to edit angle' : 'Click to remove';
           box.onclick = () => { ops.splice(i,1); render(); };
           if(isRot){
