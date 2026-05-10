@@ -1159,8 +1159,18 @@ function initParadox(){
   })();
 }
 
-// ----- Quantum Cryptography (BB84) -----
+// ----- Quantum Cryptography (QKD overview + BB84) -----
 function initCrypto(){
+  // Tab switching
+  document.querySelectorAll('.qc-tab').forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll('.qc-tab').forEach(x => x.classList.toggle('active', x===b));
+      document.querySelectorAll('.qc-panel').forEach(p => p.classList.add('hidden'));
+      const panel = document.getElementById('qc-' + b.dataset.qc);
+      if(panel) panel.classList.remove('hidden');
+    };
+  });
+
   const nSlider = document.getElementById('bb-n');
   const nLbl    = document.getElementById('bb-n-v');
   const eveBox  = document.getElementById('bb-eve');

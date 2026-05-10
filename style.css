@@ -716,6 +716,38 @@ p{margin:.4em 0}
 }
 .bb-eve-toggle input{accent-color:var(--accent-3);width:16px;height:16px}
 
+/* Quantum Cryptography tabs */
+.qc-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.qc-tab{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  padding:8px 16px;border-radius:9px;cursor:pointer;font-family:inherit;font-size:.92rem;
+  transition:.2s;
+}
+.qc-tab:hover{border-color:var(--accent-2)}
+.qc-tab.active{background:var(--grad);border-color:transparent;color:#fff}
+.qc-panel{padding:6px 0}
+.qc-panel.hidden{display:none}
+.qc-panel h4{font-size:1.15rem;color:var(--accent-2);margin:6px 0 10px}
+.qc-panel h5{font-size:.95rem;margin:14px 0 6px}
+.qc-panel ul, .qc-panel ol{padding-left:22px;line-height:1.6}
+.qc-panel li{margin:4px 0}
+
+/* Reference tables inside the QC panels */
+.qc-table-wrap{overflow-x:auto;margin:8px 0}
+.qc-table{
+  width:100%;border-collapse:collapse;font-size:.88rem;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:8px;overflow:hidden;
+}
+.qc-table th, .qc-table td{
+  padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);
+}
+.qc-table thead th{
+  background:var(--bg-2);color:var(--accent-2);
+  font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;
+}
+.qc-table tbody tr:last-child td{border-bottom:none}
+.qc-table tbody tr:hover{background:rgba(124,58,237,.06)}
+
 .bb-table{
   background:var(--bg-2);border:1px solid var(--border);border-radius:10px;
   padding:8px;margin-top:14px;overflow-x:auto;

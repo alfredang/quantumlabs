@@ -1116,38 +1116,163 @@
       </div>
     </section>
 
-    <!-- =================== QUANTUM CRYPTOGRAPHY (BB84) =================== -->
+    <!-- =================== QUANTUM CRYPTOGRAPHY =================== -->
     <section class="module" id="crypto">
       <div class="card lesson">
-        <h2>Quantum Cryptography (BB84)</h2>
-        <p>BB84 — invented by Bennett &amp; Brassard in 1984 — is the original quantum
-          <b>key-distribution</b> protocol. Two parties build a shared secret key by sending
-          single qubits over a quantum channel. Any eavesdropper who tries to listen
-          <i>must</i> disturb the qubits, leaving statistical fingerprints in the key.</p>
-        <p class="muted"><b>Encoding rule:</b> Alice picks a random bit and a random basis.
-          Z-basis (<i>rectilinear</i>) encodes 0 → |0⟩, 1 → |1⟩.
-          X-basis (<i>diagonal</i>) encodes 0 → |+⟩, 1 → |−⟩.
-          Bob measures in his own random basis, then they keep only the bits where their bases matched.</p>
+        <h2>Quantum Cryptography</h2>
+        <p>Cryptography that gets its security from the laws of physics — not from the
+          difficulty of a math problem. The flagship application is <b>QKD</b> (Quantum
+          Key Distribution): two parties share a secret key over an open channel, with
+          provable detection of any eavesdropping.</p>
       </div>
 
       <div class="card try-it">
-        <h3>Try it · BB84 protocol</h3>
-        <div class="bb-controls">
-          <div>
-            <label>Bits to send: <b><span id="bb-n-v">16</span></b></label>
-            <input type="range" min="8" max="40" value="16" id="bb-n" class="slider"/>
+        <div class="qc-tabs">
+          <button class="qc-tab active" data-qc="qkd">🔑 QKD Overview</button>
+          <button class="qc-tab" data-qc="bb84">📡 BB84 Protocol</button>
+        </div>
+
+        <!-- ============== QKD OVERVIEW ============== -->
+        <div class="qc-panel" id="qc-qkd">
+          <h4>Quantum Key Distribution</h4>
+          <p>Alice and Bob need a shared secret key (e.g. for a one-time pad or AES) but
+            their channel is wide open — Eve can listen, copy, even resend. Classical
+            key-exchange (RSA, Diffie–Hellman, ECC) leans on hard math problems. A
+            future quantum computer running Shor's algorithm would break those problems
+            in polynomial time. <b>QKD doesn't share that fate</b> — its security rests
+            on physics, not complexity.</p>
+
+          <svg class="paradox-svg" viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg">
+            <!-- Alice -->
+            <rect x="20" y="60" width="100" height="60" rx="6" fill="#7c3aed"/>
+            <text x="70" y="85" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">ALICE</text>
+            <text x="70" y="105" text-anchor="middle" fill="#e9d5ff" font-size="10">photon source</text>
+            <!-- Bob -->
+            <rect x="600" y="60" width="100" height="60" rx="6" fill="#06b6d4"/>
+            <text x="650" y="85" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">BOB</text>
+            <text x="650" y="105" text-anchor="middle" fill="#cffafe" font-size="10">detectors</text>
+            <!-- Quantum channel -->
+            <line x1="120" y1="78" x2="600" y2="78" stroke="#fbbf24" stroke-width="2.5"/>
+            <text x="360" y="50" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="600">quantum channel — single photons →</text>
+            <!-- Photon icons along quantum channel -->
+            <g fill="#fbbf24">
+              <circle cx="200" cy="78" r="3"/>
+              <circle cx="290" cy="78" r="3"/>
+              <circle cx="380" cy="78" r="3"/>
+              <circle cx="470" cy="78" r="3"/>
+              <circle cx="540" cy="78" r="3"/>
+            </g>
+            <!-- Classical channel -->
+            <line x1="120" y1="105" x2="600" y2="105" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 3"/>
+            <text x="360" y="130" text-anchor="middle" fill="#94a3b8" font-size="11">classical (authenticated) channel — bases / sifting / verification</text>
+            <!-- Eve -->
+            <rect x="320" y="170" width="80" height="50" rx="6" fill="#ef4444" opacity="0.85"/>
+            <text x="360" y="195" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">EVE</text>
+            <text x="360" y="210" text-anchor="middle" fill="#fecaca" font-size="10">eavesdropper</text>
+            <!-- Eve's failed intercept attempt -->
+            <line x1="360" y1="170" x2="360" y2="90" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <text x="368" y="160" fill="#ef4444" font-size="10">⚡ disturbs photon</text>
+          </svg>
+
+          <h5 style="color:var(--accent-2);margin-top:18px">Why it works</h5>
+          <ul>
+            <li><b>No-cloning theorem.</b> An unknown quantum state cannot be perfectly copied. Eve cannot tap-and-forward like a classical wiretap.</li>
+            <li><b>Measurement disturbance.</b> Reading a qubit in the wrong basis randomises it. Eve's guesses leave a statistical fingerprint.</li>
+            <li><b>Consequence.</b> Any eavesdropping raises the error rate in the sifted key — Alice &amp; Bob detect it and abort.</li>
+          </ul>
+
+          <h5 style="color:var(--accent-2)">Anatomy of every QKD protocol</h5>
+          <ol>
+            <li><b>Quantum channel</b> — Alice sends single photons (qubits) carrying random key info.</li>
+            <li><b>Authenticated classical channel</b> — public, but tamper-evident (Eve can read it, can't forge it).</li>
+            <li><b>Sifting</b> — over the classical channel, compare measurement <i>settings</i> (not the bits) and keep only matching shots.</li>
+            <li><b>Error estimation</b> — reveal a small random subset of the sifted bits to bound the eavesdropping rate. Abort above threshold (~11% for BB84).</li>
+            <li><b>Privacy amplification</b> — compress the surviving key with a 2-universal hash to wash out any partial info Eve may have leaked.</li>
+            <li><b>Final key</b> — short, but information-theoretically secret.</li>
+          </ol>
+
+          <h5 style="color:var(--accent-2)">Family of QKD protocols</h5>
+          <div class="qc-table-wrap">
+            <table class="qc-table">
+              <thead><tr><th>Protocol</th><th>Year</th><th>Core idea</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td><b>BB84</b></td><td>1984</td><td>Two conjugate bases (Z, X)</td><td>The workhorse — see next tab</td></tr>
+                <tr><td>B92</td><td>1992</td><td>Just two non-orthogonal states</td><td>Simpler, lower key rate</td></tr>
+                <tr><td>E91</td><td>1991</td><td>Entangled Bell pairs + CHSH test</td><td>Eavesdropping shows up as Bell-inequality violation drop</td></tr>
+                <tr><td>SARG04</td><td>2004</td><td>BB84 variant</td><td>Robust against photon-number-splitting attacks</td></tr>
+                <tr><td>MDI-QKD</td><td>2012</td><td>Measurement-device-independent</td><td>Closes detector-side-channel attacks</td></tr>
+                <tr><td>CV-QKD</td><td>2002+</td><td>Continuous variables (quadratures)</td><td>Uses standard telecom homodyne detection</td></tr>
+                <tr><td>Twin-field QKD</td><td>2018</td><td>Single-photon interference</td><td>Beats the repeaterless rate-distance bound</td></tr>
+              </tbody>
+            </table>
           </div>
-          <label class="bb-eve-toggle">
-            <input type="checkbox" id="bb-eve"/> Eve is eavesdropping
-          </label>
-        </div>
-        <div class="row-buttons">
-          <button id="bb-run" class="primary-btn">Run protocol</button>
+
+          <h5 style="color:var(--accent-2)">Real-world deployments</h5>
+          <ul>
+            <li>Commercial systems: ID Quantique, Toshiba, QuintessenceLabs.</li>
+            <li>Beijing–Shanghai QKD backbone — ~2000 km of fibre, 32 trusted nodes.</li>
+            <li>Micius satellite (China, 2017) — first space-to-ground QKD over &gt;1000 km.</li>
+            <li>Inter-bank pilots in Geneva, Vienna, Tokyo, Seoul.</li>
+          </ul>
+
+          <p class="muted"><b>Caveat.</b> QKD only solves <i>key distribution</i>. You still need
+            authenticated classical channels (which require some pre-shared key or
+            post-quantum signatures), and you still encrypt your data with a classical
+            symmetric cipher. QKD &amp; post-quantum cryptography are complements, not rivals.</p>
         </div>
 
-        <div class="bb-table" id="bb-table"></div>
+        <!-- ============== BB84 PROTOCOL ============== -->
+        <div class="qc-panel hidden" id="qc-bb84">
+          <h4>BB84 — Bennett &amp; Brassard, 1984</h4>
+          <p>The original QKD protocol. Encodes each bit randomly in one of two
+            <b>conjugate bases</b>: a measurement in one basis randomises the result if
+            the qubit was prepared in the other.</p>
 
-        <div class="bb-summary" id="bb-summary"></div>
+          <h5 style="color:var(--accent-2)">Encoding rule</h5>
+          <div class="qc-table-wrap">
+            <table class="qc-table">
+              <thead><tr><th>Basis</th><th>Bit 0</th><th>Bit 1</th></tr></thead>
+              <tbody>
+                <tr><td><b>Z</b> (rectilinear ⊕)</td><td>|0⟩  &nbsp;(↕)</td><td>|1⟩  &nbsp;(↔)</td></tr>
+                <tr><td><b>X</b> (diagonal ⊗)</td><td>|+⟩ &nbsp;(↗)</td><td>|−⟩ &nbsp;(↖)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h5 style="color:var(--accent-2)">Steps</h5>
+          <ol>
+            <li>Alice prepares N qubits, each with a random bit and random basis. Sends over the quantum channel.</li>
+            <li>Bob measures each one in his own randomly-chosen basis (Z or X).</li>
+            <li>Public discussion: Alice &amp; Bob announce <b>bases</b> (not bits) over the classical channel.</li>
+            <li><b>Sift</b>: keep only the ~50% of bits where their bases matched.</li>
+            <li><b>Error check</b>: sample a small random subset and compare bits. If error rate &gt; ~11%, an eavesdropper is present — abort.</li>
+            <li><b>Privacy amplification</b>: hash the survivors to a shorter, fully-secret key.</li>
+          </ol>
+
+          <p class="muted"><b>Eve's dilemma.</b> She doesn't know Alice's basis. If she
+            measures in the wrong basis (half the time) she gets a random bit AND
+            disturbs the qubit. Bob then sees that disturbance: even when Alice's and
+            Bob's bases match, ~25% of those bits will disagree, far above the natural
+            channel-noise floor.</p>
+
+          <h5 style="color:var(--accent-2)">Try it · simulate the protocol</h5>
+          <div class="bb-controls">
+            <div>
+              <label>Bits to send: <b><span id="bb-n-v">16</span></b></label>
+              <input type="range" min="8" max="40" value="16" id="bb-n" class="slider"/>
+            </div>
+            <label class="bb-eve-toggle">
+              <input type="checkbox" id="bb-eve"/> Eve is eavesdropping
+            </label>
+          </div>
+          <div class="row-buttons">
+            <button id="bb-run" class="primary-btn">Run protocol</button>
+          </div>
+
+          <div class="bb-table" id="bb-table"></div>
+          <div class="bb-summary" id="bb-summary"></div>
+        </div>
+
       </div>
     </section>
 
