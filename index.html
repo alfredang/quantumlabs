@@ -35,6 +35,7 @@
     <ul class="nav-list">
       <li><a href="#math">📐 Math Prerequisites</a></li>
       <li><a href="#postulates">📜 QM Postulates</a></li>
+      <li><a href="#density-matrix">🌫 Density Matrix</a></li>
       <li><a href="#history">🕰 History of QM</a></li>
       <li><a href="#qubits"        data-mod="qubits">⚛  Qubits</a></li>
       <li><a href="#bloch">🌐 Bloch Sphere</a></li>
@@ -252,6 +253,136 @@
           with Born-rule probability, ⑤ the state collapses to that eigenvector. Everything
           else — entanglement, interference, teleportation, error correction — emerges from
           how those five steps interact.</p>
+      </div>
+    </section>
+
+    <!-- =================== DENSITY MATRIX =================== -->
+    <section class="module" id="density-matrix">
+      <div class="card lesson">
+        <h2>Density Matrix</h2>
+        <p>The state-vector |ψ⟩ formalism is elegant but limited: it only describes
+          <b>pure states</b> with perfect knowledge. Real quantum systems are often
+          <b>mixed</b> — entangled with an unknown environment, prepared from a
+          probabilistic ensemble, or partial views of larger systems. The
+          <b>density operator</b> ρ generalises |ψ⟩ to handle pure and mixed states uniformly,
+          and lets us reformulate all five QM postulates in a more powerful language.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>Definition</h3>
+        <p>For an ensemble where the system is in pure state |ψᵢ⟩ with probability pᵢ:</p>
+        <div class="math-formula">ρ &nbsp;=&nbsp; Σᵢ pᵢ |ψᵢ⟩⟨ψᵢ|</div>
+
+        <h5 style="color:var(--accent-2);margin-top:14px">Properties</h5>
+        <div class="math-grid">
+          <div class="math-cell">
+            <div class="math-cell-h">Hermitian</div>
+            <div class="math-formula">ρ<sup>†</sup> = ρ</div>
+          </div>
+          <div class="math-cell">
+            <div class="math-cell-h">Trace 1</div>
+            <div class="math-formula">Tr(ρ) = 1</div>
+          </div>
+          <div class="math-cell">
+            <div class="math-cell-h">Positive semi-definite</div>
+            <div class="math-formula">⟨φ|ρ|φ⟩ ≥ 0  &nbsp; ∀ |φ⟩</div>
+          </div>
+          <div class="math-cell">
+            <div class="math-cell-h">Pure vs mixed test</div>
+            <div class="math-formula">Tr(ρ²) = 1 (pure) &nbsp; ⇔ &nbsp; Tr(ρ²) &lt; 1 (mixed)</div>
+          </div>
+        </div>
+
+        <h5 style="color:var(--accent-2)">Pure state special case</h5>
+        <p>A pure state |ψ⟩ has density matrix:</p>
+        <div class="math-formula">ρ = |ψ⟩⟨ψ| &nbsp; (a rank-1 projector)</div>
+
+        <h5 style="color:var(--accent-2)">Bloch-sphere representation (single qubit)</h5>
+        <p>Any single-qubit density matrix can be written as:</p>
+        <div class="math-formula">ρ = ½ ( I + r⃗ · σ⃗ ),  &nbsp; r⃗ = (r<sub>x</sub>, r<sub>y</sub>, r<sub>z</sub>),  &nbsp; |r⃗| ≤ 1</div>
+        <p class="muted">where σ⃗ = (X, Y, Z) are the Pauli matrices.
+          <b>|r⃗| = 1</b> → pure state on the Bloch-sphere surface;
+          <b>|r⃗| &lt; 1</b> → mixed state inside the ball;
+          <b>r⃗ = 0</b> → maximally mixed ρ = I/2 (no information).</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>① State postulate (reformulated)</h3>
+        <p>The state of an isolated quantum system is described by a <b>density operator</b> ρ
+          on Hilbert space ℋ, satisfying:</p>
+        <div class="math-formula">ρ = ρ<sup>†</sup>, &nbsp; ρ ≥ 0, &nbsp; Tr(ρ) = 1</div>
+        <p class="muted">Generalises the pure-state postulate <i>(|ψ⟩ ∈ ℋ with ⟨ψ|ψ⟩ = 1)</i>
+          by allowing classical mixtures and entanglement-induced mixedness. Pure states
+          are the special case where ρ has rank 1.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>② Evolution postulate (reformulated)</h3>
+        <p>The density operator of an isolated system evolves by <b>unitary conjugation</b>:</p>
+        <div class="math-formula">ρ(t₁) &nbsp;=&nbsp; U·ρ(t₀)·U<sup>†</sup></div>
+        <p>Continuously, the <b>von Neumann equation</b> — the density-matrix analog of
+          Schrödinger's equation:</p>
+        <div class="math-formula">i ℏ &nbsp;dρ/dt &nbsp;=&nbsp; [ Ĥ, ρ ]</div>
+        <p class="muted">For a pure state ρ = |ψ⟩⟨ψ|, this reduces to the standard Schrödinger
+          evolution. The von Neumann equation also extends naturally to <b>open systems</b>
+          (the Lindblad master equation), where dynamics aren't unitary because the system
+          exchanges information with its environment.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>③ Observable postulate (reformulated)</h3>
+        <p>Every measurable quantity is represented by a <b>Hermitian operator A</b> with
+          spectral decomposition:</p>
+        <div class="math-formula">A &nbsp;=&nbsp; Σᵢ aᵢ &nbsp;Pᵢ,  &nbsp; Pᵢ = |aᵢ⟩⟨aᵢ|  (eigen-projectors)</div>
+        <p>Each eigenvalue aᵢ ∈ ℝ is a possible measurement outcome; Pᵢ projects onto the
+          corresponding eigenspace.</p>
+        <p class="muted">Identical to the pure-state version — observables don't depend on
+          how the state is described.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>④ Born rule (reformulated)</h3>
+        <p>The probability of measuring outcome aᵢ when the system is in state ρ is given
+          by a <b>trace</b>:</p>
+        <div class="math-formula">P(aᵢ) &nbsp;=&nbsp; Tr( Pᵢ &nbsp;ρ )</div>
+        <p>The <b>expectation value</b> of any observable A is:</p>
+        <div class="math-formula">⟨ A ⟩ &nbsp;=&nbsp; Tr( A &nbsp;ρ )</div>
+        <p class="muted">For a pure state, this reproduces the original rule:
+          P(aᵢ) = ⟨ψ|Pᵢ|ψ⟩ = |⟨aᵢ|ψ⟩|² (just unfold ρ = |ψ⟩⟨ψ| and use cyclicity of trace).
+          The trace formula extends linearly to mixed states for free.</p>
+      </div>
+
+      <div class="card try-it">
+        <h3>⑤ Collapse postulate (reformulated)</h3>
+        <p>If a projective measurement of A returns outcome aᵢ, the post-measurement state is:</p>
+        <div class="math-formula">ρ' &nbsp;=&nbsp; Pᵢ &nbsp;ρ &nbsp;Pᵢ &nbsp; / &nbsp; Tr( Pᵢ &nbsp;ρ )</div>
+        <p>The denominator normalises so that Tr(ρ′) = 1.</p>
+        <p class="muted">For a pure state ρ = |ψ⟩⟨ψ| this reduces to ρ′ = |aᵢ⟩⟨aᵢ| — the
+          familiar collapse to the eigenvector. For a mixed state, only the part of the
+          ensemble consistent with the observed outcome survives. A second measurement of
+          the same observable returns aᵢ with certainty.</p>
+      </div>
+
+      <div class="card lesson">
+        <h3>Why bother with density matrices?</h3>
+        <ul style="line-height:1.8">
+          <li><b>Mixed states.</b> Thermal states, ensembles, partially-known preparations —
+            none have a single |ψ⟩ representation, but they all have a clean ρ.</li>
+          <li><b>Subsystems via partial trace.</b> If a composite system AB is in a pure
+            entangled state, neither A nor B individually is pure. The reduced state
+            ρ<sub>A</sub> = Tr<sub>B</sub>(ρ<sub>AB</sub>) is a mixed density matrix that
+            correctly predicts every local measurement on A.</li>
+          <li><b>Open quantum systems.</b> Decoherence is most naturally described by
+            non-unitary evolution of ρ (Kraus operators, Lindblad master equation).</li>
+          <li><b>Generalised measurements (POVMs).</b> Beyond projective measurements:
+            outcomes characterised by positive operators {E<sub>i</sub>} with Σ E<sub>i</sub> = I.</li>
+          <li><b>Information theory.</b> Von Neumann entropy S(ρ) = −Tr(ρ log ρ),
+            channel capacities, quantum error correction — all naturally formulated with ρ.</li>
+        </ul>
+        <p class="muted">In modern quantum-computing literature, ρ is the default. The pure-state
+          formalism is a friendly entry point, but every advanced topic — from QEC to
+          quantum information theory to noisy-channel analysis — lives in the density-matrix
+          world.</p>
       </div>
     </section>
 
