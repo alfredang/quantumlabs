@@ -1635,7 +1635,7 @@ function initCircuits(){
   // Arm a gate for placement (used by both click and drag start).
   // Preserves a partially-placed CNOT (after control was set) so the user can finish via drag.
   function startPending(type){
-    const isTwoQubit = (t) => t === 'CNOT' || t === 'CZ';
+    const isTwoQubit = (t) => t === 'CNOT' || t === 'CZ' || t === 'SWAP';
     if(pending && isTwoQubit(pending.type) && pending.qubits.length === 1 && pending.type === type){
       paletteBtns().forEach(b => b.classList.toggle('active', b.dataset.gate === type));
       setHint(`Now drop on the second wire to complete the ${type}.`);
@@ -1645,6 +1645,7 @@ function initCircuits(){
     pending = {type, qubits:[]};
     if(type === 'CNOT')          setHint('Drop on a wire to set the CONTROL qubit.');
     else if(type === 'CZ')       setHint('Drop on a wire to set the first CZ qubit (CZ is symmetric).');
+    else if(type === 'SWAP')     setHint('Drop on a wire to set the first SWAP qubit (SWAP is symmetric).');
     else if(type === 'BARRIER')  setHint('Drop on any wire to insert a barrier.');
     else if(type === 'M')        setHint('Drop on a wire to add a measurement.');
     else if(['Rx','Ry','Rz'].includes(type)) setHint(`Drop ${type} on a wire — you'll be asked for an angle.`);
@@ -1672,23 +1673,27 @@ function initCircuits(){
 
         if(op.type === 'BARRIER'){
           cell.classList.add('barrier-cell');
-        } else if(op.type === 'CNOT' || op.type === 'CZ'){
+        } else if(op.type === 'CNOT' || op.type === 'CZ' || op.type === 'SWAP'){
           const [c, t] = op.qubits;
           const lo = Math.min(c,t), hi = Math.max(c,t);
-          if(q === c){
-            cell.classList.add('ctrl');
-            cell.innerHTML = '<div class="ctrl-dot" title="Click to remove"></div>';
-            cell.onclick = () => { ops.splice(i,1); render(); };
-          } else if(q === t){
-            if(op.type === 'CNOT'){
-              cell.classList.add('target');
-              cell.innerHTML = '<div class="xor" title="Click to remove">⊕</div>';
-            } else {
-              // CZ: target also drawn as a control dot (CZ is symmetric)
+          if(q === c || q === t){
+            const removeFn = () => { ops.splice(i,1); render(); };
+            if(op.type === 'SWAP'){
+              cell.classList.add('swap');
+              cell.innerHTML = '<div class="swap-x" title="Click to remove · SWAP">×</div>';
+            } else if(op.type === 'CZ'){
               cell.classList.add('ctrl');
               cell.innerHTML = '<div class="ctrl-dot" title="Click to remove · CZ"></div>';
+            } else if(q === c){
+              // CNOT control
+              cell.classList.add('ctrl');
+              cell.innerHTML = '<div class="ctrl-dot" title="Click to remove"></div>';
+            } else {
+              // CNOT target
+              cell.classList.add('target');
+              cell.innerHTML = '<div class="xor" title="Click to remove">⊕</div>';
             }
-            cell.onclick = () => { ops.splice(i,1); render(); };
+            cell.onclick = removeFn;
           }
           if(q > lo && q < hi) cell.classList.add('cnot-line');
         } else if(op.qubits.includes(q)){
@@ -1764,18 +1769,24 @@ function initCircuits(){
     if(!pending){ setHint('First pick a gate from the palette above.'); return; }
     const t = pending.type;
 
-    if(t === 'CNOT' || t === 'CZ'){
+    if(t === 'CNOT' || t === 'CZ' || t === 'SWAP'){
       pending.qubits.push(q);
       if(pending.qubits.length === 1){
-        setHint(t === 'CZ'
+        const msg = t === 'CZ'
           ? `First qubit set on q${q}. Now drop the CZ button on (or click) the second wire — CZ is symmetric.`
-          : `Control set on q${q}. Now drop the CNOT button on (or click) the TARGET wire.`);
+          : t === 'SWAP'
+            ? `First qubit set on q${q}. Now drop the SWAP button on (or click) the second wire — SWAP is symmetric.`
+            : `Control set on q${q}. Now drop the CNOT button on (or click) the TARGET wire.`;
+        setHint(msg);
       } else {
         if(pending.qubits[0] === pending.qubits[1]){
           const otherWire = pending.qubits[0] === 0 ? 'q1' : 'q0';
-          setHint(t === 'CNOT'
+          const errMsg = t === 'CNOT'
             ? `That's the same wire as the control. CNOT acts BETWEEN two qubits — control on one wire, target on a DIFFERENT wire. Try ${otherWire}.`
-            : `CZ acts BETWEEN two different qubits. Pick a different wire — try ${otherWire}.`);
+            : t === 'SWAP'
+              ? `SWAP exchanges TWO different qubits. Pick a different wire — try ${otherWire}.`
+              : `CZ acts BETWEEN two different qubits. Pick a different wire — try ${otherWire}.`;
+          setHint(errMsg);
           pending.qubits.pop();
           return;
         }
@@ -2008,6 +2019,22 @@ function initCircuits(){
     return r;
   }
 
+  function applySWAP(state, q1, q2, N){
+    // SWAP exchanges amplitudes of basis states that differ only in (q1, q2) bits.
+    // Iterate through pairs (i, j) where bit-q1=0,bit-q2=1 in i, opposite in j.
+    const dim = 1 << N;
+    const r = state.slice();
+    for(let i=0;i<dim;i++){
+      const b1 = (i >> q1) & 1;
+      const b2 = (i >> q2) & 1;
+      if(b1 === 0 && b2 === 1){
+        const j = i ^ (1 << q1) ^ (1 << q2);   // partner with bits flipped
+        const tmp = r[i]; r[i] = r[j]; r[j] = tmp;
+      }
+    }
+    return r;
+  }
+
   function gateMatrix(op){
     const I = c(1), Z0 = c(0);
     switch(op.type){
@@ -2042,6 +2069,8 @@ function initCircuits(){
         state = applyCNOT(state, op.qubits[0], op.qubits[1], N);
       } else if(op.type === 'CZ'){
         state = applyCZ(state, op.qubits[0], op.qubits[1], N);
+      } else if(op.type === 'SWAP'){
+        state = applySWAP(state, op.qubits[0], op.qubits[1], N);
       } else {
         const M = gateMatrix(op);
         if(M) state = apply1(state, op.qubits[0], M, N);

@@ -1231,6 +1231,11 @@ p{margin:.4em 0}
   color:var(--accent);display:flex;align-items:center;justify-content:center;
   font-weight:700;background:var(--bg-2);font-size:1.1rem;cursor:pointer;
 }
+.cell .swap-x{
+  width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:1.4rem;color:var(--accent);cursor:pointer;
+  text-shadow:0 0 8px rgba(124,58,237,.6);
+}
 .cell.cnot-line::after{
   content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--accent);
   transform:translateX(-50%);z-index:0;
