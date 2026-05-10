@@ -438,16 +438,28 @@ function initBloch(){
     // Vector orientation: rotateY(−φ) then rotateZ(θ−π/2). Length R.
     vec.style.transform = `rotateY(${-phi}rad) rotateZ(${theta - Math.PI/2}rad)`;
 
-    // Dirac notation
+    // Dirac notation — coefficients can be negative when θ ∈ (360°, 720°), so show signs.
     const cT = Math.cos(theta/2), sT = Math.sin(theta/2);
+    const aSign = cT < 0 ? '−' : '';
+    const bSign = sT < 0 ? '− ' : '+ ';
+    const aAbs  = Math.abs(cT).toFixed(3);
+    const bAbs  = Math.abs(sT).toFixed(3);
     const phaseStr = (Math.abs(phi) < 1e-3 || Math.abs(sT) < 1e-6)
       ? ''
       : ` · e<sup>i·${pDeg.toFixed(0)}°</sup>`;
+
+    // Spinor cycle: the state acquires a global −1 between θ = 360° and 720°.
+    const inSpinor = (theta > 2*Math.PI - 1e-3) && (theta < 4*Math.PI - 1e-3);
+    const spinorLine = inSpinor
+      ? `<div style="margin-top:8px;font-size:.82rem;color:var(--accent-3);background:rgba(236,72,153,.08);border:1px solid rgba(236,72,153,.3);padding:6px 10px;border-radius:6px">⚡ <b>Spinor region.</b> Bloch vector points the same way as θ = ${(tDeg-360).toFixed(0)}°, but the state has picked up a global −1. Slide all the way to 720° to recover |ψ⟩.</div>`
+      : '';
+
     stEl.innerHTML = `
       <span class="label">State |ψ⟩</span>
-      <div class="eq">|ψ⟩ = <span class="alpha">${cT.toFixed(3)}</span>·|0⟩ + <span class="beta">${sT.toFixed(3)}${phaseStr}</span>·|1⟩</div>
+      <div class="eq">|ψ⟩ = ${aSign}<span class="alpha">${aAbs}</span>·|0⟩ ${bSign}<span class="beta">${bAbs}${phaseStr}</span>·|1⟩</div>
       <span class="approx">θ = ${tDeg.toFixed(0)}°, &nbsp; φ = ${pDeg.toFixed(0)}°
-        &nbsp;·&nbsp; |α|² = ${(cT*cT*100).toFixed(1)}%, &nbsp; |β|² = ${(sT*sT*100).toFixed(1)}%</span>`;
+        &nbsp;·&nbsp; |α|² = ${(cT*cT*100).toFixed(1)}%, &nbsp; |β|² = ${(sT*sT*100).toFixed(1)}%</span>
+      ${spinorLine}`;
   }
 
   function applyView(){

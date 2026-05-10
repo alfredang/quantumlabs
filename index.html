@@ -514,6 +514,11 @@
         <p class="muted"><b>θ</b> (polar) is the angle from the |0⟩ pole; <b>φ</b> (azimuth)
           is the angle around the equator. Drag the sliders or apply gates to watch the state
           vector rotate.</p>
+        <p class="muted">⚡ <b>Spinor twist.</b> Slide θ past 360° and into the 360°–720° range
+          to see one of the strangest features of spin-½ systems: the Bloch vector returns
+          to where it started after a 2π rotation, but the state vector picks up a global −1
+          phase. <b>Only a 4π (720°) rotation brings the state truly back to itself.</b>
+          That's the spinor property — observable in interferometry experiments with neutrons.</p>
       </div>
 
       <div class="card try-it">
@@ -538,8 +543,10 @@
             </div>
           </div>
           <div class="bloch-controls">
-            <label>θ (polar): <b><span id="bloch-theta-v">0</span>°</b></label>
-            <input type="range" min="0" max="180" value="0" step="1" id="bloch-theta" class="slider"/>
+            <label>θ (polar): <b><span id="bloch-theta-v">0</span>°</b>
+              &nbsp;<span class="muted" style="font-size:.78rem">(0–720° spans two spinor cycles)</span>
+            </label>
+            <input type="range" min="0" max="720" value="0" step="1" id="bloch-theta" class="slider"/>
             <label>φ (azimuth): <b><span id="bloch-phi-v">0</span>°</b></label>
             <input type="range" min="0" max="360" value="0" step="1" id="bloch-phi" class="slider"/>
             <div class="dirac-box" id="bloch-state"></div>
