@@ -1573,8 +1573,9 @@ function initMeasurement(){
     bar(0, '#06b6d4', counts[0]);
     bar(1, '#ec4899', counts[1]);
   }
-  document.getElementById('m-once').onclick = () => shoot(1);
-  document.getElementById('m-many').onclick = () => shoot(100);
+  document.getElementById('m-once').onclick  = () => shoot(1);
+  document.getElementById('m-many').onclick  = () => shoot(100);
+  document.getElementById('m-shots').onclick = () => shoot(1024);
   document.getElementById('m-reset').onclick = () => { counts={0:0,1:0}; c0.textContent='0'; c1.textContent='0'; draw(); };
   draw();
   window.addEventListener('resize', draw);
