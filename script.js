@@ -2272,6 +2272,55 @@ const ALGO_CIRCUITS = {
     },
     caption: 'Register 1 is put into a uniform superposition over x. The modular-exponentiation oracle entangles Reg₁ with f(x)=aˣ mod N. Inverse QFT extracts the period r — the rest of Shor is classical post-processing (gcds).',
   },
+  bv: {
+    spec: {
+      rows: ['x: |0⟩ⁿ', 'y: |1⟩'],
+      steps: [
+        [{q:0, gate:'H⊗ⁿ'}, {q:1, gate:'H'}],
+        [{span:[0,1], gate:'Uf', cls:'oracle'}],
+        [{q:0, gate:'H⊗ⁿ'}],
+        [{q:0, gate:'M', cls:'meas'}],
+      ],
+    },
+    caption: 'Phase kickback writes the n-bit secret string s onto the relative phases of the data register. The final H⊗ⁿ converts those phases into a single basis state — measuring the data register reads s directly.',
+  },
+  simon: {
+    spec: {
+      rows: ['x: |0⟩ⁿ', 'y: |0⟩ⁿ'],
+      steps: [
+        [{q:0, gate:'H⊗ⁿ'}],
+        [{span:[0,1], gate:'Uf', cls:'oracle'}],
+        [{q:1, gate:'M', cls:'meas'}],
+        [{q:0, gate:'H⊗ⁿ'}],
+        [{q:0, gate:'M', cls:'meas'}],
+      ],
+    },
+    caption: 'After the oracle, the data register collapses (post-measurement of y) onto the two-element coset {x, x⊕s}. A second H⊗ⁿ produces a uniform sample over y satisfying y·s = 0. n−1 such samples + classical Gaussian elimination recover s.',
+  },
+  vqe: {
+    spec: {
+      rows: ['q₀: |0⟩', 'q₁: |0⟩'],
+      steps: [
+        [{q:0, gate:'Ry(θ₁)', cls:'rot'}, {q:1, gate:'Ry(θ₂)', cls:'rot'}],
+        [{cnot:[0,1]}],
+        [{q:0, gate:'Ry(θ₃)', cls:'rot'}, {q:1, gate:'Ry(θ₄)', cls:'rot'}],
+        [{q:0, gate:'⟨H⟩', cls:'meas'}, {q:1, gate:'⟨H⟩', cls:'meas'}],
+      ],
+    },
+    caption: 'A simple "hardware-efficient" ansatz — alternating layers of single-qubit rotations and entangling gates. The expectation ⟨H⟩ = ⟨ψ(θ)|Ĥ|ψ(θ)⟩ is sampled and fed to a classical optimiser that updates θ. Repeat until the energy converges.',
+  },
+  qaoa: {
+    spec: {
+      rows: ['q₀: |0⟩', 'q₁: |0⟩'],
+      steps: [
+        [{q:0, gate:'H'}, {q:1, gate:'H'}],
+        [{span:[0,1], gate:'e^{−iγ H_C}', cls:'oracle'}],
+        [{q:0, gate:'Rx(2β)', cls:'rot'}, {q:1, gate:'Rx(2β)', cls:'rot'}],
+        [{q:0, gate:'M', cls:'meas'}, {q:1, gate:'M', cls:'meas'}],
+      ],
+    },
+    caption: 'One QAOA layer: cost-Hamiltonian evolution for time γ (e.g. ZZ couplings on the problem graph), then mixer-Hamiltonian evolution for time β (Rx on each qubit). Stack p layers; classical optimiser tunes the 2p parameters (γ_k, β_k) to maximise the sampled cost.',
+  },
 };
 
 // ----- Algorithms -----

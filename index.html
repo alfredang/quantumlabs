@@ -937,18 +937,49 @@
           <button class="tab-btn active" data-tab="coin">Quantum coin flip</button>
           <button class="tab-btn" data-tab="grover">Grover search</button>
           <button class="tab-btn" data-tab="dj">Deutsch–Jozsa</button>
+          <button class="tab-btn" data-tab="bv">Bernstein–Vazirani</button>
+          <button class="tab-btn" data-tab="simon">Simon's</button>
           <button class="tab-btn" data-tab="tele">Teleportation</button>
           <button class="tab-btn" data-tab="qft">QFT</button>
           <button class="tab-btn" data-tab="shor">Shor (factor 15)</button>
+          <button class="tab-btn" data-tab="vqe">VQE</button>
+          <button class="tab-btn" data-tab="qaoa">QAOA</button>
         </div>
         <div class="tab-panel" id="tab-coin">
           <p>Apply <b>H</b> to |0⟩ → measure. A perfectly fair coin.</p>
+          <div class="algo-explainer">
+            <p><span class="label">The problem</span> Generate a single random bit. Classical
+              random-number generators are <i>pseudo-random</i> — deterministic algorithms with
+              a hidden state; if you know the seed, you predict every output.</p>
+            <p><span class="label">The quantum trick</span> Apply <b>H</b> to |0⟩ to get an equal
+              superposition. By the Born rule, measurement returns 0 or 1 with exactly 50% each
+              and no hidden state — fundamentally random, not pseudo-random.</p>
+            <p><span class="label">Apps</span> Cryptographic key generation, Monte Carlo
+              simulations, gambling. Commercial QRNGs already ship from ID Quantique,
+              Quantinuum, and inside some smartphone chipsets.</p>
+            <div class="algo-meta"><span>Year: <b>n/a (textbook)</b></span><span>Speedup: <b>quality, not speed</b></span><span>Qubits: <b>1</b></span></div>
+          </div>
           <div class="mini-circuit" id="circ-coin"></div>
           <button id="coin-flip" class="primary-btn">Flip</button>
           <div class="coin" id="coin-result">?</div>
         </div>
         <div class="tab-panel hidden" id="tab-grover">
           <p>Search 4 boxes for the marked one. A classical search needs ~3 peeks; Grover needs <b>1</b>.</p>
+          <div class="algo-explainer">
+            <p><span class="label">The problem</span> Unstructured search: given an oracle that
+              recognises the right item among N candidates, find it as quickly as possible.</p>
+            <p><span class="label">Classical</span> Worst case N queries (average N/2). Linear in N.</p>
+            <p><span class="label">Quantum</span> Grover finds it in <b>O(√N)</b> queries — a
+              quadratic speedup. Trick: prepare a uniform superposition with H⊗ⁿ, then alternate
+              an <b>oracle</b> that flips the marked state's phase with a <b>diffusion</b>
+              operator that amplifies it. After ~ (π/4)·√N iterations the marked amplitude
+              dominates.</p>
+            <p><span class="label">Optimality</span> Provably no quantum algorithm beats O(√N) for
+              fully unstructured search.</p>
+            <p><span class="label">Apps</span> Database lookup, SAT solving, halving the effective
+              key length of symmetric ciphers (AES-128 → AES-64 against a quantum attacker).</p>
+            <div class="algo-meta"><span>Year: <b>1996</b></span><span>Speedup: <b>quadratic (√N)</b></span><span>Qubits: <b>n + ancillas</b></span></div>
+          </div>
           <div class="mini-circuit" id="circ-grover"></div>
           <div class="grover-row" id="grover-boxes"></div>
           <button id="grover-run" class="primary-btn">Run Grover</button>
@@ -957,14 +988,89 @@
         <div class="tab-panel hidden" id="tab-dj">
           <p>Is the hidden function constant (always 0/1) or balanced (half-and-half)?
             Classical: up to 3 queries. Quantum: <b>1</b>.</p>
+          <div class="algo-explainer">
+            <p><span class="label">The problem</span> An oracle implements f: {0,1}ⁿ → {0,1}
+              promised to be either <b>constant</b> (all inputs give same answer) or
+              <b>balanced</b> (exactly half map to 0). Decide which.</p>
+            <p><span class="label">Classical</span> Worst case <b>2ⁿ⁻¹ + 1</b> queries — to be sure,
+              you might need to check more than half the inputs.</p>
+            <p><span class="label">Quantum</span> <b>One query</b>. The H–oracle–H sandwich uses
+              <a href="#kickback">phase kickback</a> to encode constant/balanced in the final
+              measurement pattern: all-zeros means constant, anything else means balanced.</p>
+            <p><span class="label">Why it matters</span> Deutsch-Jozsa (1992) was the first
+              proof that quantum computers can be <i>exponentially</i> faster than classical.
+              The problem itself is artificial, but the technique opened the door to Shor's,
+              Simon's, and Bernstein-Vazirani.</p>
+            <div class="algo-meta"><span>Year: <b>1992</b></span><span>Speedup: <b>exponential (oracle model)</b></span><span>Qubits: <b>n + 1</b></span></div>
+          </div>
           <div class="mini-circuit" id="circ-dj"></div>
           <button id="dj-new" class="ghost-btn">New function</button>
           <button id="dj-run" class="primary-btn">Run Deutsch–Jozsa</button>
           <p class="muted" id="dj-msg">Press “New function”, then “Run”.</p>
         </div>
+        <div class="tab-panel hidden" id="tab-bv">
+          <p>Find an n-bit hidden string s with just one quantum query — even though classically
+            you need n separate queries (one per bit).</p>
+          <div class="algo-explainer">
+            <p><span class="label">The problem</span> A black-box function computes
+              f(x) = s · x mod 2 for a hidden string s ∈ {0,1}ⁿ (the dot is bitwise AND, summed
+              mod 2). Find s.</p>
+            <p><span class="label">Classical</span> n queries — query e₁, e₂, …, eₙ separately to
+              read each bit of s.</p>
+            <p><span class="label">Quantum</span> <b>One query.</b> The same H–oracle–H sandwich
+              as Deutsch–Jozsa, but phase kickback writes <i>all n bits of s</i> into the
+              measurement outcome at once. Measuring the data register reads s directly.</p>
+            <p><span class="label">Why it matters</span> Cleaner-than-DJ demonstration of phase
+              kickback as a primitive — and the output is actually useful (a string, not a
+              yes/no). Often taught first when introducing the H-oracle-H pattern.</p>
+            <div class="algo-meta"><span>Year: <b>1992</b></span><span>Speedup: <b>n queries → 1</b></span><span>Qubits: <b>n + 1</b></span></div>
+          </div>
+          <div class="mini-circuit" id="circ-bv"></div>
+        </div>
+
+        <div class="tab-panel hidden" id="tab-simon">
+          <p>The first <b>exponential</b> quantum speedup over the best possible classical
+            algorithm — and a direct ancestor of Shor's factoring.</p>
+          <div class="algo-explainer">
+            <p><span class="label">The problem</span> A function f: {0,1}ⁿ → {0,1}ⁿ is promised
+              to satisfy f(x) = f(x ⊕ s) for some hidden non-zero string s
+              (and to be injective otherwise). Find s.</p>
+            <p><span class="label">Classical</span> Lower bound Ω(2^(n/2)) queries — essentially
+              a birthday/collision search.</p>
+            <p><span class="label">Quantum</span> <b>O(n) queries</b> — exponentially fewer.
+              The circuit applies H⊗ⁿ, the oracle Uf, then H⊗ⁿ again on the input register.
+              Measuring gives a random y satisfying y · s = 0; n−1 such samples plus linear
+              algebra recover s.</p>
+            <p><span class="label">Why it matters</span> Simon's algorithm (1994) was the first
+              proof of an exponential quantum speedup over the best <i>possible</i> classical
+              algorithm (not just the best known). It directly inspired <b>Shor</b> a few
+              months later — both reduce to finding the period of a function via QFT-style
+              interference.</p>
+            <div class="algo-meta"><span>Year: <b>1994</b></span><span>Speedup: <b>exponential</b></span><span>Qubits: <b>2n</b></span></div>
+          </div>
+          <div class="mini-circuit" id="circ-simon"></div>
+        </div>
+
         <div class="tab-panel hidden" id="tab-tele">
           <p>Send a qubit's unknown state from <b>Alice</b> to <b>Bob</b> using a shared Bell pair
             and 2 classical bits. The original is destroyed in the process (no-cloning).</p>
+          <div class="algo-explainer">
+            <p><span class="label">The problem</span> Alice has a qubit |ψ⟩ in some unknown state
+              and wants to send it to Bob across the room. <b>No-cloning</b> says she can't copy
+              it; measurement collapses it; classical descriptions need infinitely many bits to
+              specify a continuous state exactly.</p>
+            <p><span class="label">The protocol</span> Alice and Bob pre-share a Bell pair. Alice
+              performs a Bell-basis measurement on |ψ⟩ together with her half of the pair,
+              getting two classical bits (m₁, m₂). She phones those to Bob. Bob applies
+              X<sup>m₂</sup> Z<sup>m₁</sup> to his half — and now <i>his</i> qubit holds |ψ⟩.</p>
+            <p><span class="label">Catch</span> Not faster than light. The two classical bits
+              still travel at c, and without them Bob's qubit looks completely random.</p>
+            <p><span class="label">Apps</span> Quantum repeaters for long-distance QKD, gate
+              teleportation in fault-tolerant quantum computing, distributed quantum
+              networking. First demonstrated 1997 (Bouwmeester); satellite-to-ground 2017
+              (Micius).</p>
+            <div class="algo-meta"><span>Year: <b>1993 (Bennett et al.)</b></span><span>Speedup: <b>n/a (a primitive)</b></span><span>Qubits: <b>3</b></span></div>
+          </div>
           <div class="mini-circuit" id="circ-tele"></div>
           <button id="tele-run" class="primary-btn">Run teleportation</button>
           <div id="tele-steps" class="story-steps"></div>
@@ -974,6 +1080,20 @@
             Every output basis state has equal <b>magnitude</b> — the algorithm hides its
             answer in the <b>phases</b>. QFT is the engine inside Shor and quantum phase
             estimation.</p>
+          <div class="algo-explainer">
+            <p><span class="label">What it does</span> The quantum analog of the discrete
+              Fourier transform. Hides answers in phases: a basis state |x⟩ becomes a
+              uniform-magnitude superposition with phases winding at rate proportional to x.</p>
+            <p><span class="label">Speed</span> Classical FFT: O(N log N) on N-element arrays.
+              QFT: <b>O(log² N) gates</b> on n = log₂ N qubits — <i>exponentially</i> faster.</p>
+            <p><span class="label">Catch</span> A measurement only reveals one outcome from the
+              superposition. So QFT isn't useful as a final answer — it's the universal
+              <b>"period-to-peak" converter</b> used inside other algorithms.</p>
+            <p><span class="label">Where it lives</span> The engine inside Shor's factoring,
+              <b>quantum phase estimation</b> (eigenvalue extraction), HHL (linear systems),
+              hidden subgroup problems.</p>
+            <div class="algo-meta"><span>Year: <b>1994 (Coppersmith)</b></span><span>Speedup: <b>O(log²N) gates</b></span><span>Qubits: <b>n</b></span></div>
+          </div>
           <div class="mini-circuit" id="circ-qft"></div>
           <div class="qft-controls">
             <span class="muted">Input basis state: </span>
@@ -986,9 +1106,75 @@
           <p>Shor's algorithm factors a number N by finding the period of f(x) = aˣ mod N.
             The quantum part (period finding) is exponentially faster than classical.
             Demo factors <b>N = 15</b>.</p>
+          <div class="algo-explainer">
+            <p><span class="label">The problem</span> Factor a large integer N. Best classical
+              algorithm (general number field sieve) runs in sub-exponential time
+              ~exp(1.9·n^(1/3)) where n = log N. RSA, Diffie-Hellman, and ECC all rely on
+              this being slow.</p>
+            <p><span class="label">Shor's</span> <b>Polynomial in n</b> — runs in roughly O(n³)
+              quantum gates. Strategy: pick a random a coprime to N; use QFT-based
+              <b>period-finding</b> to find the smallest r with aʳ ≡ 1 mod N; if r is even and
+              a^(r/2) ≢ −1 mod N, then gcd(a^(r/2) ± 1, N) gives a non-trivial factor. Quantum
+              part = period finding; the rest is classical.</p>
+            <p><span class="label">Implications</span> A large enough quantum computer would
+              break RSA-2048 in hours. Today's largest hardware demonstrations: 15 = 3 × 5
+              (2001 IBM), 21 = 3 × 7 (2012). Larger numbers are blocked by gate-count and
+              error rates — driving today's fault-tolerant QC race and post-quantum
+              cryptography standardisation (NIST PQC, 2024).</p>
+            <div class="algo-meta"><span>Year: <b>1994</b></span><span>Speedup: <b>super-polynomial</b></span><span>Qubits: <b>~2n + ancillas</b></span></div>
+          </div>
           <div class="mini-circuit" id="circ-shor"></div>
           <button id="shor-run" class="primary-btn">Factor 15</button>
           <pre id="shor-out" class="output-box">Press the button to factor.</pre>
+        </div>
+
+        <div class="tab-panel hidden" id="tab-vqe">
+          <p>The flagship NISQ-era algorithm: find the lowest energy of a Hamiltonian using
+            a hybrid <b>quantum + classical</b> feedback loop. Used right now to compute
+            ground-state energies of small molecules on real hardware.</p>
+          <div class="algo-explainer">
+            <p><span class="label">The problem</span> Find the lowest eigenvalue (ground-state
+              energy) of a Hamiltonian Ĥ. Central to quantum chemistry (molecule electronic
+              structure), materials, and condensed-matter physics.</p>
+            <p><span class="label">Classical</span> Scales exponentially in the number of
+              electrons — quickly intractable beyond ~50–100 spin orbitals.</p>
+            <p><span class="label">VQE</span> A <b>variational</b> hybrid loop:
+              <ul>
+                <li>Prepare a parametrised <b>ansatz</b> state |ψ(θ)⟩ on the QPU</li>
+                <li>Measure ⟨ψ(θ)|Ĥ|ψ(θ)⟩ by sampling each Pauli term</li>
+                <li>Feed the energy estimate to a classical optimiser (COBYLA, SPSA, …)</li>
+                <li>Update θ, re-prepare, repeat until convergence</li>
+              </ul>
+              The <i>variational principle</i> guarantees the result is an upper bound on
+              the true ground-state energy.</p>
+            <p><span class="label">Why it matters</span> Tolerates noisy gates because the
+              classical optimiser routes around small errors. Already used to compute
+              H₂, LiH, BeH₂ ground states on IBM, Google, Rigetti, IonQ hardware.</p>
+            <div class="algo-meta"><span>Year: <b>2014 (Peruzzo et al.)</b></span><span>Speedup: <b>heuristic, NISQ</b></span><span>Qubits: <b>= # spin orbitals</b></span></div>
+          </div>
+          <div class="mini-circuit" id="circ-vqe"></div>
+        </div>
+
+        <div class="tab-panel hidden" id="tab-qaoa">
+          <p>The combinatorial-optimisation cousin of VQE: encode an NP-hard cost function
+            as a Hamiltonian and tune a short circuit to bias measurements toward good
+            solutions.</p>
+          <div class="algo-explainer">
+            <p><span class="label">The problem</span> Combinatorial optimisation: Max-Cut, MaxSAT,
+              graph colouring, portfolio optimisation, scheduling — all NP-hard classically.</p>
+            <p><span class="label">QAOA</span> Encode the cost as a Hamiltonian H<sub>C</sub> and
+              pick a mixer H<sub>M</sub> = Σ Xᵢ. Build a <b>p-layer</b> circuit
+              U(γ, β) = Π<sub>k=1..p</sub> e<sup>−iβ<sub>k</sub>H<sub>M</sub></sup> · e<sup>−iγ<sub>k</sub>H<sub>C</sub></sup>
+              applied to H⊗ⁿ|0⟩. Measure → sample candidate solutions. Classical optimiser
+              tunes the 2p parameters (γ, β) to maximise the expected cost.</p>
+            <p><span class="label">Promise</span> Heuristic. As p → ∞, QAOA can reach the
+              optimum. At p = 1 it already beats some classical heuristics on Max-Cut. Active
+              research on whether NISQ-era depth gives a real practical speedup.</p>
+            <p><span class="label">Apps</span> Demonstrated on portfolio optimisation
+              (JPMorgan), traffic flow (Volkswagen), graph problems (Google, IBM, IonQ).</p>
+            <div class="algo-meta"><span>Year: <b>2014 (Farhi, Goldstone, Gutmann)</b></span><span>Speedup: <b>heuristic, NISQ</b></span><span>Qubits: <b>= # variables</b></span></div>
+          </div>
+          <div class="mini-circuit" id="circ-qaoa"></div>
         </div>
       </div>
       <div class="card quiz" data-quiz="algorithms"><h3>Mini quiz</h3><div class="quiz-body"></div></div>

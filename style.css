@@ -719,6 +719,33 @@ p{margin:.4em 0}
 /* mc-cross used by SWAP renderings */
 .mc-cross{font-size:1.3rem;font-weight:700;color:var(--accent);line-height:1}
 
+/* Algorithm explainer card — placed before the mini-circuit diagram. */
+.algo-explainer{
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-left:3px solid var(--accent-2);
+  border-radius:8px;
+  padding:12px 16px;margin:10px 0 14px;
+  font-size:.92rem;line-height:1.6;
+}
+.algo-explainer p{margin:6px 0}
+.algo-explainer p:first-child{margin-top:0}
+.algo-explainer p:last-child{margin-bottom:0}
+.algo-explainer .label{
+  display:inline-block;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--accent-2);font-weight:700;margin-right:6px;
+}
+.algo-explainer ul{margin:4px 0 6px 20px;padding:0}
+.algo-explainer ul li{margin:2px 0}
+.algo-meta{
+  display:inline-flex;gap:8px;flex-wrap:wrap;font-size:.78rem;margin-top:8px;
+}
+.algo-meta span{
+  background:var(--bg-2);border:1px solid var(--border);
+  padding:3px 9px;border-radius:99px;color:var(--muted);
+}
+.algo-meta span b{color:var(--accent-3)}
+
 /* ===================== MINI CIRCUIT DIAGRAM (algorithms) ===================== */
 .mini-circuit{
   background:var(--bg-2);border:1px solid var(--border);border-radius:10px;
