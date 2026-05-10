@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>QuantumLab Beginner — Learn Quantum Computing Visually</title>
-<link rel="stylesheet" href="style.css?v=20260510b" />
+<link rel="stylesheet" href="style.css?v=20260510c" />
 </head>
 <body>
 
@@ -895,7 +895,17 @@
           <button id="cir-run" class="primary-btn">Run circuit</button>
           <button id="cir-clear" class="ghost-btn">Clear</button>
         </div>
-        <div id="cir-output" class="output-box">State: |00⟩</div>
+        <div class="cir-result">
+          <div class="cir-result-head">
+            <span class="cir-result-title">Probabilities</span>
+            <span class="cir-result-sub" id="cir-result-sub">State: |00⟩</span>
+          </div>
+          <canvas id="cir-chart"></canvas>
+          <div id="cir-measured" class="cir-measured empty"></div>
+        </div>
+        <details class="cir-numeric"><summary>Show numeric values</summary>
+          <pre id="cir-output" class="output-box">|00⟩  100.00%</pre>
+        </details>
       </div>
       <div class="card quiz" data-quiz="circuits"><h3>Mini quiz</h3><div class="quiz-body"></div></div>
     </section>
@@ -2151,6 +2161,6 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="script.js?v=20260510b"></script>
+<script src="script.js?v=20260510c"></script>
 </body>
 </html>

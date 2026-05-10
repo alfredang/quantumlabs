@@ -1235,6 +1235,40 @@ p{margin:.4em 0}
   font-family:'JetBrains Mono',monospace;font-size:.88rem;white-space:pre-wrap;
   max-height:240px;overflow:auto;
 }
+
+/* Probability chart (IBM-Composer-style bar chart) */
+.cir-result{
+  margin-top:14px;background:var(--bg-2);
+  border:1px solid var(--border);border-radius:10px;
+  padding:14px 14px 8px;
+}
+.cir-result-head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:0 4px 6px;border-bottom:1px solid var(--border);margin-bottom:10px;
+}
+.cir-result-title{
+  font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);
+}
+.cir-result-sub{
+  font-family:'STIX Two Math','Cambria Math','Times New Roman',serif;
+  font-size:.95rem;color:var(--accent-2);
+}
+#cir-chart{
+  width:100%;display:block;height:260px;
+}
+.cir-measured{
+  margin-top:8px;padding:8px 12px;border-radius:6px;text-align:center;
+  font-family:'JetBrains Mono',monospace;font-size:.92rem;
+  background:rgba(16,185,129,.10);border:1px solid var(--success);
+  color:var(--success);
+}
+.cir-measured.empty{display:none}
+.cir-numeric{
+  margin-top:8px;font-size:.85rem;color:var(--muted);
+}
+.cir-numeric summary{cursor:pointer;padding:6px 0;user-select:none}
+.cir-numeric summary:hover{color:var(--accent-2)}
+.cir-numeric .output-box{margin-top:6px}
 .story-steps{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .story-steps .tele-step{
   background:var(--surface-2);padding:10px 14px;border-radius:8px;

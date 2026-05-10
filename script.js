@@ -1829,8 +1829,132 @@ function initCircuits(){
 
   document.getElementById('cir-clear').onclick = () => {
     ops = []; clearPending(); render();
-    out.textContent = `State: |${'0'.repeat(nQ)}⟩`;
+    showInitialChart();
   };
+
+  // ---------- Probability bar chart (IBM-Composer style) ----------
+  const chart = document.getElementById('cir-chart');
+  const chartCtx = chart ? chart.getContext('2d') : null;
+  const measuredEl = document.getElementById('cir-measured');
+  const subEl = document.getElementById('cir-result-sub');
+
+  function drawProbChart(probs, N, measuredOutcome){
+    if(!chartCtx) return;
+    const dpr = window.devicePixelRatio || 1;
+    const cssW = chart.clientWidth || 600;
+    const cssH = 260;
+    chart.style.height = cssH + 'px';
+    chart.width  = Math.round(cssW * dpr);
+    chart.height = Math.round(cssH * dpr);
+    chartCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    chartCtx.clearRect(0, 0, cssW, cssH);
+
+    const padL = 50, padR = 14, padT = 14, padB = 44;
+    const chartW = cssW - padL - padR;
+    const chartH = cssH - padT - padB;
+
+    // Y-axis gridlines + labels
+    chartCtx.font = '11px system-ui, -apple-system, sans-serif';
+    chartCtx.textBaseline = 'middle';
+    for(let p = 0; p <= 100; p += 20){
+      const y = padT + chartH * (1 - p/100);
+      chartCtx.fillStyle = '#8b93a7';
+      chartCtx.textAlign = 'right';
+      chartCtx.fillText(p.toString(), padL - 8, y);
+      chartCtx.strokeStyle = p === 0 ? 'rgba(255,255,255,.18)' : 'rgba(255,255,255,.07)';
+      chartCtx.lineWidth = 1;
+      chartCtx.beginPath();
+      chartCtx.moveTo(padL, y);
+      chartCtx.lineTo(padL + chartW, y);
+      chartCtx.stroke();
+    }
+
+    // Y-axis line
+    chartCtx.strokeStyle = 'rgba(255,255,255,.18)';
+    chartCtx.beginPath();
+    chartCtx.moveTo(padL, padT);
+    chartCtx.lineTo(padL, padT + chartH);
+    chartCtx.stroke();
+
+    // Y-axis title
+    chartCtx.save();
+    chartCtx.translate(14, padT + chartH/2);
+    chartCtx.rotate(-Math.PI/2);
+    chartCtx.textAlign = 'center';
+    chartCtx.textBaseline = 'middle';
+    chartCtx.fillStyle = '#8b93a7';
+    chartCtx.fillText('Probability (%)', 0, 0);
+    chartCtx.restore();
+
+    // X-axis title
+    chartCtx.fillStyle = '#8b93a7';
+    chartCtx.textAlign = 'center';
+    chartCtx.textBaseline = 'bottom';
+    chartCtx.fillText('Computational basis states', padL + chartW/2, cssH - 8);
+
+    // Bars
+    const dim = 1 << N;
+    const slotW = chartW / dim;
+    const barW  = Math.min(40, slotW * 0.6);
+    for(let i = 0; i < dim; i++){
+      const p = probs[i];
+      const bx = padL + i * slotW + (slotW - barW) / 2;
+      const barH = p * chartH;
+      const by = padT + chartH - barH;
+
+      // Highlight measured outcome bar in pink
+      const isMeasured = (measuredOutcome === i);
+      if(barH > 0){
+        const grad = chartCtx.createLinearGradient(0, by, 0, by + barH);
+        if(isMeasured){
+          grad.addColorStop(0, '#f472b6');
+          grad.addColorStop(1, '#ec4899');
+        } else {
+          grad.addColorStop(0, '#22d3ee');
+          grad.addColorStop(1, '#06b6d4');
+        }
+        chartCtx.fillStyle = grad;
+        chartCtx.fillRect(bx, by, barW, barH);
+      }
+
+      // X-axis basis label
+      const label = i.toString(2).padStart(N, '0');
+      chartCtx.fillStyle = isMeasured ? '#f472b6' : '#cbd5e1';
+      chartCtx.textAlign = 'center';
+      chartCtx.textBaseline = 'top';
+      chartCtx.font = '11px "JetBrains Mono", monospace';
+      chartCtx.fillText(label, bx + barW/2, padT + chartH + 8);
+
+      // Percentage above the bar (only if visible & there's space)
+      if(p > 0.005 && barW > 22){
+        chartCtx.fillStyle = isMeasured ? '#f472b6' : '#06b6d4';
+        chartCtx.textBaseline = 'bottom';
+        chartCtx.font = '10px "JetBrains Mono", monospace';
+        chartCtx.fillText(`${(p*100).toFixed(1)}%`, bx + barW/2, by - 2);
+      }
+
+      // Restore default font for the next iteration
+      chartCtx.font = '11px system-ui, -apple-system, sans-serif';
+    }
+  }
+
+  function showInitialChart(){
+    const N = nQ;
+    const dim = 1 << N;
+    const probs = new Array(dim).fill(0);
+    probs[0] = 1;
+    drawProbChart(probs, N);
+    if(subEl) subEl.textContent = `State: |${'0'.repeat(N)}⟩  (initial)`;
+    if(measuredEl){ measuredEl.textContent = ''; measuredEl.classList.add('empty'); }
+    if(out) out.textContent = `|${'0'.repeat(N)}⟩  100.00%`;
+  }
+  window.addEventListener('resize', () => {
+    if(chart && document.getElementById('circuits').classList.contains('active')){
+      // Re-render the most recent chart on resize. Simplest: re-run the run handler.
+      // We don't have stored probs, so just redraw initial if no ops.
+      // (Caller can re-click Run for fresh data.)
+    }
+  });
 
   // ---------- Simulator (complex amplitudes) ----------
   const c = (re, im=0) => [re, im];
@@ -1915,6 +2039,30 @@ function initCircuits(){
     }
 
     const probs = state.map(a => a[0]*a[0] + a[1]*a[1]);
+
+    // Single-shot measurement outcome (when an M gate is in the circuit)
+    let pick = undefined;
+    if(measured){
+      const rnd = Math.random();
+      let acc = 0;
+      pick = 0;
+      for(let i=0;i<dim;i++){ acc += probs[i]; if(rnd < acc){ pick = i; break; } }
+    }
+
+    drawProbChart(probs, N, pick);
+
+    if(subEl) subEl.textContent = `${N} qubit${N>1?'s':''} · ${ops.length} operation${ops.length===1?'':'s'}`;
+    if(measuredEl){
+      if(measured){
+        measuredEl.textContent = `Single-shot measurement → |${pick.toString(2).padStart(N,'0')}⟩`;
+        measuredEl.classList.remove('empty');
+      } else {
+        measuredEl.textContent = '';
+        measuredEl.classList.add('empty');
+      }
+    }
+
+    // Numeric values (collapsed by default, available for power users)
     const lines = [];
     for(let i=0;i<dim;i++){
       if(probs[i] > 1e-6){
@@ -1922,18 +2070,11 @@ function initCircuits(){
         lines.push(`|${bin}⟩  ${(probs[i]*100).toFixed(2)}%`);
       }
     }
-    let result = `Outcome probabilities (${N} qubit${N>1?'s':''}):\n  ` +
-      (lines.length ? lines.join('\n  ') : '(zero — empty circuit)');
-    if(measured){
-      const rnd = Math.random();
-      let acc = 0, pick = 0;
-      for(let i=0;i<dim;i++){ acc += probs[i]; if(rnd < acc){ pick = i; break; } }
-      result += `\n→ Measured: |${pick.toString(2).padStart(N,'0')}⟩`;
-    }
-    out.textContent = result;
+    if(out) out.textContent = lines.length ? lines.join('\n') : '(zero — empty circuit)';
   };
 
   render();
+  showInitialChart();
 }
 
 // ----- Noise on a quantum channel -----
