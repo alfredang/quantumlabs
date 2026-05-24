@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>QuantumLab Beginner — Learn Quantum Computing Visually</title>
-<link rel="stylesheet" href="style.css?v=20260510e" />
+<link rel="stylesheet" href="style.css?v=20260524d" />
 </head>
 <body>
 
@@ -56,6 +56,7 @@
     </ul>
     <h2>Reference</h2>
     <ul class="nav-list">
+      <li><a href="#simulators">🖥 Quantum Simulators</a></li>
       <li><a href="#glossary">📖 Glossary</a></li>
       <li><a href="#faq">❓ FAQ</a></li>
       <li><a href="#challenge" id="nav-challenge">🏆 Final Challenge</a></li>
@@ -1226,18 +1227,18 @@
       <div class="card try-it">
         <h3>Try it · Pick a demo</h3>
         <div class="tabs">
-          <button class="tab-btn active" data-tab="coin">Quantum coin flip</button>
+          <button class="tab-btn active" data-tab="tele">Teleportation</button>
+          <button class="tab-btn" data-tab="coin">Quantum coin flip</button>
           <button class="tab-btn" data-tab="grover">Grover search</button>
           <button class="tab-btn" data-tab="dj">Deutsch–Jozsa</button>
           <button class="tab-btn" data-tab="bv">Bernstein–Vazirani</button>
           <button class="tab-btn" data-tab="simon">Simon's</button>
-          <button class="tab-btn" data-tab="tele">Teleportation</button>
           <button class="tab-btn" data-tab="qft">QFT</button>
           <button class="tab-btn" data-tab="shor">Shor (factor 15)</button>
           <button class="tab-btn" data-tab="vqe">VQE</button>
           <button class="tab-btn" data-tab="qaoa">QAOA</button>
         </div>
-        <div class="tab-panel" id="tab-coin">
+        <div class="tab-panel hidden" id="tab-coin">
           <p>Apply <b>H</b> to |0⟩ → measure. A perfectly fair coin.</p>
           <div class="algo-explainer">
             <p><span class="label">The problem</span> Generate a single random bit. Classical
@@ -1343,7 +1344,7 @@
           <div class="mini-circuit" id="circ-simon"></div>
         </div>
 
-        <div class="tab-panel hidden" id="tab-tele">
+        <div class="tab-panel" id="tab-tele">
           <p>Send a qubit's unknown state from <b>Alice</b> to <b>Bob</b> using a shared Bell pair
             and 2 classical bits. The original is destroyed in the process (no-cloning).</p>
           <div class="algo-explainer">
@@ -1366,6 +1367,96 @@
           <div class="mini-circuit" id="circ-tele"></div>
           <button id="tele-run" class="primary-btn">Run teleportation</button>
           <div id="tele-steps" class="story-steps"></div>
+
+          <details class="tele-derivation">
+            <summary>Step-by-step derivation (the algebra behind the simulation)</summary>
+            <div class="derivation-body">
+              <p><span class="label">Setup</span> Alice has an unknown qubit
+                <b>|ψ⟩ = α|0⟩ + β|1⟩</b> (qubit&nbsp;0). She shares a Bell pair
+                <b>|Φ⁺⟩ = (|00⟩ + |11⟩)/√2</b> with Bob: qubit&nbsp;1 is hers, qubit&nbsp;2 is Bob's.</p>
+
+              <p><span class="label">Step 1 — Joint state of all 3 qubits</span></p>
+              <pre class="math-block">|ψ⟩ ⊗ |Φ⁺⟩
+  = (α|0⟩ + β|1⟩) ⊗ (|00⟩ + |11⟩)/√2
+  = (1/√2) [ α|0⟩(|00⟩+|11⟩) + β|1⟩(|00⟩+|11⟩) ]
+  = (1/√2) [ α|000⟩ + α|011⟩ + β|100⟩ + β|111⟩ ]</pre>
+
+              <p><span class="label">Step 2 — Alice applies CNOT (control = qubit 0, target = qubit 1)</span>
+                CNOT flips qubit&nbsp;1 when qubit&nbsp;0 is&nbsp;1, so |10⋯⟩ → |11⋯⟩ and |11⋯⟩ → |10⋯⟩.</p>
+              <pre class="math-block">→ (1/√2) [ α|000⟩ + α|011⟩ + β|110⟩ + β|101⟩ ]</pre>
+
+              <p><span class="label">Step 3 — Alice applies H to qubit 0</span>
+                using H|0⟩ = (|0⟩+|1⟩)/√2 and H|1⟩ = (|0⟩−|1⟩)/√2.</p>
+              <pre class="math-block">→ (1/2) [ α(|0⟩+|1⟩)|00⟩ + α(|0⟩+|1⟩)|11⟩
+        + β(|0⟩−|1⟩)|10⟩ + β(|0⟩−|1⟩)|01⟩ ]</pre>
+
+              <p><span class="label">Step 4 — Group by Alice's two-qubit outcome (q0 q1)</span></p>
+              <pre class="math-block">= (1/2) [ |00⟩ (α|0⟩ + β|1⟩)
+        + |01⟩ (α|1⟩ + β|0⟩)
+        + |10⟩ (α|0⟩ − β|1⟩)
+        + |11⟩ (α|1⟩ − β|0⟩) ]</pre>
+
+              <p>Each of the 4 outcomes for Alice's measurement occurs with probability ¼,
+                and Bob's qubit collapses to one of four states — each a known unitary away from |ψ⟩.</p>
+
+              <p><span class="label">Step 5 — Bob's correction (m₁ m₂ = q0 q1)</span></p>
+              <pre class="math-block">m₁ m₂ = 00  →  Bob has α|0⟩ + β|1⟩   = |ψ⟩            → apply I
+m₁ m₂ = 01  →  Bob has α|1⟩ + β|0⟩   = X|ψ⟩           → apply X
+m₁ m₂ = 10  →  Bob has α|0⟩ − β|1⟩   = Z|ψ⟩           → apply Z
+m₁ m₂ = 11  →  Bob has α|1⟩ − β|0⟩   = XZ|ψ⟩          → apply X then Z</pre>
+
+              <p>In one line: Bob applies <b>X<sup>m₂</sup> Z<sup>m₁</sup></b> and recovers <b>|ψ⟩</b> exactly.
+                Note that α and β never appear in the classical bits Alice sends — the unknown
+                amplitudes ride along inside the entanglement, which is why <b>no-cloning</b> isn't violated:
+                Alice's original collapsed at Step&nbsp;4.</p>
+
+              <p><span class="label">Sanity check — without Bob's correction</span>
+                averaging over Alice's 4 equally-likely outcomes, Bob's reduced density matrix is
+                <b>ρ = ½ I</b> — the maximally mixed state. The 2 classical bits are exactly the
+                information needed to turn that noise back into |ψ⟩, and they travel at the speed of
+                light: <i>no</i> faster-than-light signalling.</p>
+
+              <hr class="derivation-rule" />
+
+              <p><span class="label">Worked example — Alice sends |ψ⟩ = |0⟩</span>
+                Plug in <b>α = 1, β = 0</b> and follow the same five steps. Bob must end up holding |0⟩.</p>
+
+              <p><b>Step 1 — Initial 3-qubit state.</b> Bell pair shared, Alice prepares |0⟩:</p>
+              <pre class="math-block">|0⟩ ⊗ (|00⟩ + |11⟩)/√2
+  = (1/√2) ( |0⟩|00⟩ + |0⟩|11⟩ )
+  = (1/√2) ( |000⟩ + |011⟩ )</pre>
+
+              <p><b>Step 2 — CNOT (control = q0, target = q1).</b>
+                q0 is |0⟩ in both terms, so q1 is never flipped. State unchanged:</p>
+              <pre class="math-block">(1/√2) ( |000⟩ + |011⟩ )</pre>
+
+              <p><b>Step 3 — H on q0.</b> H|0⟩ = (|0⟩+|1⟩)/√2:</p>
+              <pre class="math-block">(1/2) ( |0⟩|00⟩ + |1⟩|00⟩ + |0⟩|11⟩ + |1⟩|11⟩ )
+= (1/2) ( |000⟩ + |100⟩ + |011⟩ + |111⟩ )</pre>
+
+              <p><b>Step 4 — Regroup by Alice's outcome (q0 q1).</b>
+                Pull Bob's qubit (q2) out on the right:</p>
+              <pre class="math-block">= (1/2) [ |00⟩|0⟩ + |01⟩|1⟩ + |10⟩|0⟩ + |11⟩|1⟩ ]</pre>
+
+              <p>Each outcome (m₁ m₂) = (q0 q1) occurs with probability ¼. Bob's qubit collapses to:</p>
+              <pre class="math-block">m₁ m₂ = 00  →  Bob has |0⟩
+m₁ m₂ = 01  →  Bob has |1⟩
+m₁ m₂ = 10  →  Bob has |0⟩
+m₁ m₂ = 11  →  Bob has |1⟩</pre>
+
+              <p><b>Step 5 — Bob applies X<sup>m₂</sup> Z<sup>m₁</sup>.</b>
+                Recall X|0⟩=|1⟩, X|1⟩=|0⟩, Z|0⟩=|0⟩, Z|1⟩=−|1⟩.</p>
+              <pre class="math-block">00:  Bob has |0⟩  →  I·|0⟩       = |0⟩       ✓
+01:  Bob has |1⟩  →  X·|1⟩       = |0⟩       ✓
+10:  Bob has |0⟩  →  Z·|0⟩       = |0⟩       ✓
+11:  Bob has |1⟩  →  Z·X·|1⟩     = Z·|0⟩ = |0⟩  ✓</pre>
+
+              <p><span class="label">Conclusion</span> In <i>every</i> branch — no matter which of the
+                4 outcomes Alice's measurement produced — Bob's final state is exactly <b>|0⟩</b>,
+                which is the state |ψ⟩ Alice started with. The teleportation is deterministic from
+                Bob's point of view; the randomness is entirely absorbed by the correction.</p>
+            </div>
+          </details>
         </div>
         <div class="tab-panel hidden" id="tab-qft">
           <p>The Quantum Fourier Transform maps |x⟩ → (1/√N) Σₖ e<sup>2πi·xk/N</sup> |k⟩.
@@ -2112,6 +2203,29 @@
     </section>
 
     <!-- =================== GLOSSARY =================== -->
+    <!-- =================== SIMULATORS =================== -->
+    <section class="module" id="simulators">
+      <div class="card lesson">
+        <h2>Quantum Simulators</h2>
+        <p>Online tools where you can drag-and-drop gates onto wires and run real
+          quantum circuits in your browser — no install needed.</p>
+        <ul class="sim-list">
+          <li>
+            <a href="https://quantum.cloud.ibm.com/composer" target="_blank" rel="noopener">
+              <b>IBM Quantum Composer</b></a>
+            <p class="muted">Build circuits visually and run them on IBM's real
+              superconducting QPUs or their simulators. Free tier with an IBM account.</p>
+          </li>
+          <li>
+            <a href="https://quantum-circuit.com/home" target="_blank" rel="noopener">
+              <b>Quantastica — Quantum Programming Studio</b></a>
+            <p class="muted">Browser-based circuit designer and simulator. Exports to
+              Qiskit, Cirq, Q#, OpenQASM, and runs on multiple backends. No login required.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
     <section class="module" id="glossary">
       <div class="card lesson">
         <h2>Glossary</h2>
@@ -2162,6 +2276,6 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="script.js?v=20260510e"></script>
+<script src="script.js?v=20260524d"></script>
 </body>
 </html>

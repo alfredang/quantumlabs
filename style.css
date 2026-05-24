@@ -1293,6 +1293,28 @@ p{margin:.4em 0}
 }
 .story-steps .tele-step.last{border-left-color:var(--success);background:rgba(16,185,129,.1)}
 
+.tele-derivation{
+  margin-top:16px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;
+}
+.tele-derivation>summary{
+  cursor:pointer;font-weight:600;color:var(--accent-2);user-select:none;
+  padding:4px 0;list-style:none;
+}
+.tele-derivation>summary::-webkit-details-marker{display:none}
+.tele-derivation>summary::before{content:"▸ ";transition:transform .15s}
+.tele-derivation[open]>summary::before{content:"▾ "}
+.tele-derivation .derivation-body{margin-top:10px;font-size:.92rem;line-height:1.55}
+.tele-derivation .derivation-body p{margin:10px 0}
+.tele-derivation .derivation-rule{
+  border:0;border-top:1px dashed var(--border);margin:18px 0 14px;
+}
+.tele-derivation .math-block{
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;margin:8px 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.88rem;line-height:1.55;overflow-x:auto;white-space:pre;color:var(--text);
+}
+
 /* ===================== CONTROL VERDICT ===================== */
 .verdict{
   margin-top:12px;padding:12px;border-radius:10px;text-align:center;font-weight:600;
@@ -1345,6 +1367,13 @@ p{margin:.4em 0}
 .quiz-result.fail{background:rgba(239,68,68,.18);color:var(--danger);border:1px solid var(--danger)}
 
 /* ===================== GLOSSARY / FAQ ===================== */
+.sim-list{list-style:none;padding:0;margin:12px 0 0;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.sim-list li{background:var(--surface-2);padding:14px 16px;border-radius:10px;
+  border:1px solid var(--border)}
+.sim-list a{color:var(--accent-2);text-decoration:none;font-size:1.02rem}
+.sim-list a:hover{text-decoration:underline}
+.sim-list p{margin:6px 0 0;font-size:.88rem}
 .glossary-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
 .glossary-list .g-item{background:var(--surface-2);padding:12px;border-radius:10px;border:1px solid var(--border)}
 .glossary-list .g-item b{color:var(--accent-2)}
