@@ -2596,6 +2596,60 @@ function initAlgorithms(){
     }, i*650));
   };
 
+  // Deutsch (1-bit)
+  (() => {
+    const fns = [
+      {id:0, label:'f₀: f(x)=0',   type:'constant', f:(x)=>0},
+      {id:1, label:'f₁: f(x)=1',   type:'constant', f:(x)=>1},
+      {id:2, label:'f₂: f(x)=x',   type:'balanced', f:(x)=>x},
+      {id:3, label:'f₃: f(x)=1−x', type:'balanced', f:(x)=>1-x},
+    ];
+    let pickedId = 0;
+    const btns   = document.querySelectorAll('.deutsch-f');
+    const circEl = document.getElementById('deutsch-circuit');
+    const stepsEl= document.getElementById('deutsch-steps');
+    const runBtn = document.getElementById('deutsch-run');
+    if(!circEl || !runBtn) return;
+
+    function drawCircuit(){
+      circEl.innerHTML = `
+        <div class="dc-row"><span class="dc-wire-label">q₀ (data)</span>   <span class="dc-init">|0⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">Oƒ</span> <span class="dc-gate">H</span> <span class="dc-meter">📏</span></div>
+        <div class="dc-row"><span class="dc-wire-label">q₁ (ancilla)</span><span class="dc-init">|1⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">Oƒ</span> <span class="dc-empty"></span> <span class="dc-empty"></span></div>
+      `;
+    }
+    drawCircuit();
+
+    btns.forEach(b => b.onclick = () => {
+      btns.forEach(z => z.classList.toggle('active', z === b));
+      pickedId = parseInt(b.dataset.fid, 10);
+      stepsEl.innerHTML = '';
+    });
+
+    runBtn.onclick = () => {
+      const f = fns[pickedId];
+      const f0 = f.f(0), f1 = f.f(1);
+      const d  = f0 ^ f1;
+      const meas = d;             // 0 → constant, 1 → balanced
+      const verdict = d === 0 ? 'CONSTANT' : 'BALANCED';
+      stepsEl.innerHTML = '';
+      const lines = [
+        `① Pick: ${f.label}  →  f(0)=${f0}, f(1)=${f1}.`,
+        `② Prepare |ψ₀⟩ = |0⟩|1⟩, then H⊗H  →  |ψ₁⟩ = |+⟩|−⟩.`,
+        `③ Oracle (phase kickback):  Oƒ|x⟩|−⟩ = (−1)^f(x) |x⟩|−⟩.`,
+        `   ⟹  |ψ₂⟩ = (1/√2) [ (−1)^${f0} |0⟩ + (−1)^${f1} |1⟩ ] ⊗ |−⟩`,
+        `④ Factor out (−1)^f(0):  data qubit = (1/√2) [ |0⟩ + (−1)^${d} |1⟩ ] = ${d===0?'|+⟩':'|−⟩'}.`,
+        `⑤ H on data:  ${d===0?'H|+⟩ = |0⟩':'H|−⟩ = |1⟩'}.`,
+        `✓ Measured ${meas} after 1 oracle call  →  f is ${verdict}.   (classical needs 2 queries)`,
+      ];
+      lines.forEach((s,i) => setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'tele-step' + (i === lines.length-1 ? ' last' : '');
+        el.textContent = s;
+        stepsEl.appendChild(el);
+      }, i*500));
+    };
+  })();
+
   // QFT — 3-qubit Quantum Fourier Transform on a single basis state |x⟩.
   (() => {
     const N = 8; // 2³
