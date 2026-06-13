@@ -1445,6 +1445,201 @@ If f(x) = 1:
         </div>
       </div>
 
+      <div class="card lesson">
+        <h3>Circuits &amp; proofs</h3>
+        <p>The demo above uses a classical majority vote. The three derivations below show the
+          real QEC machinery — <b>encoding circuits</b>, <b>syndrome measurement</b> (which detects
+          an error <i>without</i> measuring the protected amplitudes α, β), and the algebra that
+          proves recovery is exact. We build up from bit-flips, to phase-flips, to Shor's
+          9-qubit code that beats <i>any</i> single-qubit error.</p>
+
+        <!-- ----------- 1. BIT-FLIP CODE ----------- -->
+        <details class="tele-derivation">
+          <summary>① Three-qubit bit-flip code — circuit &amp; proof</summary>
+          <div class="derivation-body">
+            <p><span class="label">Goal</span> Protect an unknown qubit
+              <b>|ψ⟩ = α|0⟩ + β|1⟩</b> against a single <b>X</b> (bit-flip) error on any of three
+              physical qubits, without ever learning α or β.</p>
+
+            <p><span class="label">Encoding circuit</span> Two CNOTs copy the bit value (not the
+              amplitudes — that would violate no-cloning) into two ancilla qubits:</p>
+            <pre class="math-block">q0 : |ψ⟩ ──●────●──            ┌ |0⟩_L = |000⟩
+           │    │       ⟶    ┤
+q1 : |0⟩ ──⊕────┼──            └ |1⟩_L = |111⟩
+                │
+q2 : |0⟩ ───────⊕──     α|0⟩+β|1⟩  ⟶  α|000⟩ + β|111⟩</pre>
+
+            <p><span class="label">Step 1 — Encoded state</span> CNOT(q0→q1) then CNOT(q0→q2):</p>
+            <pre class="math-block">(α|0⟩ + β|1⟩)|0⟩|0⟩
+  ──CNOT₀₁──►  α|00⟩|0⟩ + β|11⟩|0⟩
+  ──CNOT₀₂──►  α|000⟩ + β|111⟩   ≡  |ψ⟩_L</pre>
+
+            <p><span class="label">Step 2 — The channel injects one error</span>
+              say <b>X₁</b> flips the middle qubit:</p>
+            <pre class="math-block">X₁ |ψ⟩_L  =  α|010⟩ + β|101⟩</pre>
+
+            <p><span class="label">Step 3 — Syndrome measurement</span> Measure the two
+              <b>stabilizers</b> Z₀Z₁ and Z₁Z₂ using ancillas — these read out <i>parity</i>
+              (do neighbours agree?) and commute with the data, so α, β are untouched:</p>
+            <pre class="math-block">q0 ──●──────────────────
+q1 ──┼──●─────●─────────
+q2 ──┼──┼─────┼────●────
+     │  │     │    │
+a1 ──⊕──⊕─────┼────┼──── ➤ measure s₁  (parity of q0,q1  = Z₀Z₁)
+a2 ───────────⊕────⊕──── ➤ measure s₂  (parity of q1,q2  = Z₁Z₂)</pre>
+
+            <p>Because Z|0⟩ = +|0⟩ and Z|1⟩ = −|1⟩, each Pauli error gives a <i>unique</i>
+              two-bit syndrome — and crucially the <b>same</b> eigenvalue on both the α and β
+              branches, so the measurement never collapses the superposition:</p>
+            <table class="synd-table">
+              <tr><th>Error</th><th>s₁ = Z₀Z₁</th><th>s₂ = Z₁Z₂</th><th>Syndrome</th><th>Fix</th></tr>
+              <tr><td>I (none)</td><td>+1</td><td>+1</td><td>0 0</td><td>—</td></tr>
+              <tr><td>X₀</td><td>−1</td><td>+1</td><td>1 0</td><td>X₀</td></tr>
+              <tr><td class="hl">X₁</td><td class="hl">−1</td><td class="hl">−1</td><td class="hl">1 1</td><td class="hl">X₁</td></tr>
+              <tr><td>X₂</td><td>+1</td><td>−1</td><td>0 1</td><td>X₂</td></tr>
+            </table>
+
+            <p><span class="label">Step 4 — Check the X₁ branch</span> Apply Z₀Z₁ and Z₁Z₂ to
+              <b>α|010⟩ + β|101⟩</b>:</p>
+            <pre class="math-block">Z₀Z₁ |010⟩ = (+)(−)|010⟩ = −|010⟩      Z₀Z₁ |101⟩ = (−)(+)|101⟩ = −|101⟩   ⟹ s₁ = −1
+Z₁Z₂ |010⟩ = (−)(+)|010⟩ = −|010⟩      Z₁Z₂ |101⟩ = (+)(−)|101⟩ = −|101⟩   ⟹ s₂ = −1</pre>
+            <p>Syndrome (1 1) ⟹ the error sits on qubit 1. Both branches return the same
+              eigenvalue, so the state stays coherent.</p>
+
+            <p><span class="label">Step 5 — Correct</span> Apply X₁:</p>
+            <pre class="math-block">X₁ (α|010⟩ + β|101⟩) = α|000⟩ + β|111⟩ = |ψ⟩_L   ✓</pre>
+
+            <p><span class="label">Conclusion</span> Any <b>single</b> bit-flip is detected and
+              reversed exactly, for arbitrary α, β. The code fails only on ≥2 simultaneous flips —
+              probability <b>3p²(1−p) + p³</b>, which beats the bare rate <b>p</b> whenever
+              <b>p &lt; ½</b> (the curve in the demo above).</p>
+          </div>
+        </details>
+
+        <!-- ----------- 2. PHASE-FLIP CODE ----------- -->
+        <details class="tele-derivation">
+          <summary>② Three-qubit phase-flip code — circuit &amp; proof</summary>
+          <div class="derivation-body">
+            <p><span class="label">Goal</span> Protect against a single <b>Z</b> (phase-flip)
+              error, which sends |+⟩ ↔ |−⟩ and is invisible to the bit-flip code. The trick:
+              the phase-flip code is the bit-flip code <b>conjugated by Hadamards</b>, using the
+              identity <b>H Z H = X</b> — a phase error in the Z-basis is just a bit error in the
+              X-basis.</p>
+
+            <p><span class="label">Encoding circuit</span> Same two CNOTs, then an H on every
+              qubit. With |±⟩ = (|0⟩ ± |1⟩)/√2:</p>
+            <pre class="math-block">q0 : |ψ⟩ ──●────●──[H]──        ┌ |0⟩_L = |+++⟩
+           │    │           ⟶  ┤
+q1 : |0⟩ ──⊕────┼──[H]──        └ |1⟩_L = |−−−⟩
+                │
+q2 : |0⟩ ───────⊕──[H]──   α|0⟩+β|1⟩ ⟶ α|+++⟩ + β|−−−⟩</pre>
+
+            <p><span class="label">Step 1 — A phase error strikes</span> say <b>Z₁</b>.
+              Since Z|+⟩ = |−⟩ and Z|−⟩ = |+⟩:</p>
+            <pre class="math-block">Z₁ (α|+++⟩ + β|−−−⟩) = α|+−+⟩ + β|−+−⟩</pre>
+
+            <p><span class="label">Step 2 — Rotate the problem into the bit-flip code</span>
+              Apply H⊗H⊗H. Because H|+⟩ = |0⟩ and H|−⟩ = |1⟩:</p>
+            <pre class="math-block">H^⊗3 (α|+−+⟩ + β|−+−⟩) = α|010⟩ + β|101⟩</pre>
+            <p>— this is <i>exactly</i> the X₁ state from derivation ①.</p>
+
+            <p><span class="label">Step 3 — Measure stabilizers X₀X₁ and X₁X₂</span>
+              (equivalently: H everything, then measure Z₀Z₁, Z₁Z₂ as before). Same syndrome
+              table, with X-parities in place of Z-parities:</p>
+            <pre class="math-block">syndrome (1 1) ⟹ phase error on qubit 1 ⟹ apply Z₁</pre>
+
+            <p><span class="label">Step 4 — Correct &amp; rotate back</span></p>
+            <pre class="math-block">α|010⟩ + β|101⟩  ──X₁──►  α|000⟩ + β|111⟩
+                 ──H^⊗3──►  α|+++⟩ + β|−−−⟩ = |ψ⟩_L   ✓</pre>
+
+            <p><span class="label">Conclusion</span> The phase-flip code corrects any single Z
+              error — but it is now <i>defenceless</i> against X errors (an X just permutes
+              |±⟩ trivially up to sign). Bit-flip and phase-flip codes are mirror images; neither
+              alone covers both. That gap is what Shor's code closes.</p>
+          </div>
+        </details>
+
+        <!-- ----------- 3. SHOR 9-QUBIT CODE ----------- -->
+        <details class="tele-derivation">
+          <summary>③ Shor's 9-qubit code — circuit &amp; proof (corrects <i>any</i> single-qubit error)</summary>
+          <div class="derivation-body">
+            <p><span class="label">The idea — concatenation</span> Nest the two codes:
+              take the <b>phase-flip</b> code (outer), then replace each of its three qubits with a
+              <b>bit-flip</b> block (inner). The result is 9 qubits that correct an X error, a Z
+              error, <i>or both at once</i> (Y = iXZ) — i.e. an <b>arbitrary</b> single-qubit
+              error.</p>
+
+            <p><span class="label">Encoded states</span></p>
+            <pre class="math-block">|0⟩_L = (1/2√2) (|000⟩+|111⟩)(|000⟩+|111⟩)(|000⟩+|111⟩)
+|1⟩_L = (1/2√2) (|000⟩−|111⟩)(|000⟩−|111⟩)(|000⟩−|111⟩)
+          └──── block 1 ────┘└── block 2 ──┘└── block 3 ──┘</pre>
+
+            <p><span class="label">Encoding circuit</span> Outer phase-flip encode on qubits
+              0,3,6 (CNOT-spread + H), then an inner bit-flip encode inside each block:</p>
+            <pre class="math-block">q0 |ψ⟩ ─●──●──[H]─●──●──         ┐
+        │  │      │  │           │ block 1 (q0 q1 q2)
+q1 |0⟩ ─┼──┼─────⊕──┼──         │
+q2 |0⟩ ─┼──┼────────⊕──         ┘
+        │  │
+q3 |0⟩ ─⊕──┼──[H]─●──●──         ┐
+        │  │      │  │           │ block 2 (q3 q4 q5)
+q4 |0⟩ ─┼──┼─────⊕──┼──         │
+q5 |0⟩ ─┼──┼────────⊕──         ┘
+        │  │
+q6 |0⟩ ─┼──⊕──[H]─●──●──         ┐
+        │         │  │           │ block 3 (q6 q7 q8)
+q7 |0⟩ ─┼────────⊕──┼──         │
+q8 |0⟩ ─┼───────────⊕──         ┘
+      (outer encode)(inner encode ×3)</pre>
+
+            <p><span class="label">The 8 stabilizer generators</span>
+              (9 qubits − 8 checks = 1 logical qubit):</p>
+            <pre class="math-block">Bit-flip checks (inside each block):
+   Z₀Z₁, Z₁Z₂   Z₃Z₄, Z₄Z₅   Z₆Z₇, Z₇Z₈        (6 generators)
+Phase-flip checks (compare block signs):
+   X₀X₁X₂·X₃X₄X₅      X₃X₄X₅·X₆X₇X₈              (2 generators)</pre>
+
+            <p><span class="label">Case A — a bit-flip Xⱼ</span> Whatever qubit j is hit, it
+              lives in one block of three. The two Z-stabilizers of <i>that</i> block give the
+              same syndrome as derivation ① and pinpoint it — apply X to undo it. (6 checks =
+              one bit-flip decoder per block.)</p>
+
+            <p><span class="label">Case B — a phase-flip Zⱼ</span> A Z on <i>any</i> qubit in a
+              block flips that block's sign, |000⟩+|111⟩ ↔ |000⟩−|111⟩. Worked example, Z₀:</p>
+            <pre class="math-block">Z₀ (|000⟩+|111⟩) = |000⟩−|111⟩      (block 1 sign flips; blocks 2,3 untouched)</pre>
+            <p>The X-stabilizers compare the three block signs. Two agree, one differs ⟹ the odd
+              block is identified ⟹ apply Z to any one qubit of it to restore the sign. Note the
+              code <i>cannot</i> tell Z₀ from Z₁ from Z₂ — and doesn't need to: any single Z in the
+              block fixes the sign. (This is the outer phase-flip code voting on 3 block-signs.)</p>
+
+            <p><span class="label">Case C — Y, or an arbitrary error</span> Y₀ = iX₀Z₀ is caught
+              as a bit-flip <i>and</i> a phase-flip simultaneously by the two independent syndrome
+              types — corrected by both. More generally, write <i>any</i> single-qubit error as</p>
+            <pre class="math-block">E = c₀ I + c₁ X + c₂ Y + c₃ Z      (Pauli basis — always possible)</pre>
+            <p>so the noisy state is a superposition
+              <b>c₀|ψ_L⟩ + c₁ X|ψ_L⟩ + c₂ Y|ψ_L⟩ + c₃ Z|ψ_L⟩</b>. Measuring the syndrome
+              <b>collapses</b> this onto one branch — this is the key
+              <b>discretization-of-errors</b> theorem: a <i>continuous</i> error is digitised into
+              one of {I, X, Y, Z}, which we then correct exactly.</p>
+
+            <p><span class="label">Worked example — a tiny rotation</span> Let the error be a
+              small over-rotation E = e<sup>iθX₀</sup> = cos θ·I + i sin θ·X₀:</p>
+            <pre class="math-block">|ψ_L⟩ ⟶ cos θ |ψ_L⟩ + i sin θ · X₀|ψ_L⟩
+
+Measure block-1 syndrome Z₀Z₁:
+   outcome +1  (prob cos²θ)  ⟹ state = |ψ_L⟩      → do nothing
+   outcome −1  (prob sin²θ)  ⟹ state = X₀|ψ_L⟩    → apply X₀
+Either branch recovers |ψ_L⟩ exactly — θ has been digitised away.</pre>
+
+            <p><span class="label">Conclusion</span> Shor's code corrects an <i>arbitrary</i>
+              single-qubit error on any of the 9 qubits. It was the first proof that quantum
+              information can be protected at all — the seed of fault-tolerant quantum computing,
+              later sharpened into the 7-qubit Steane code, 5-qubit perfect code, and the surface
+              codes used in today's hardware.</p>
+          </div>
+        </details>
+      </div>
+
       <div class="card quiz" data-quiz="qec"><h3>Mini quiz</h3><div class="quiz-body"></div></div>
     </section>
 

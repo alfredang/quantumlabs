@@ -1309,6 +1309,20 @@ p{margin:.4em 0}
 .tele-derivation .derivation-rule{
   border:0;border-top:1px dashed var(--border);margin:18px 0 14px;
 }
+.tele-derivation .derivation-body .label{
+  display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--accent-2);margin-right:8px;
+  font-family:'Inter',system-ui,sans-serif;
+}
+.tele-derivation .synd-table{
+  width:100%;border-collapse:collapse;margin:8px 0;font-size:.86rem;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.tele-derivation .synd-table th,.tele-derivation .synd-table td{
+  border:1px solid var(--border);padding:5px 10px;text-align:center;
+}
+.tele-derivation .synd-table th{background:var(--surface-2);color:var(--accent-2)}
+.tele-derivation .synd-table td.hl{color:var(--success);font-weight:700}
 .algo-section{
   font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   color:var(--accent-2);margin:20px 0 8px;padding-bottom:4px;
