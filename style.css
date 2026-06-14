@@ -936,6 +936,24 @@ p{margin:.4em 0}
 .qec-bit:hover{border-color:var(--accent-2)}
 .qec-bit.active{background:var(--grad);border-color:transparent;color:#fff}
 
+.qec-err{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--muted);
+  border-radius:9px;padding:6px 12px;cursor:pointer;font-size:.85rem;
+  margin-left:6px;transition:.2s;font-family:inherit;
+}
+.qec-err:hover{border-color:var(--accent-2)}
+.qec-err[data-err="x"].active{background:rgba(124,58,237,.22);border-color:var(--accent);color:#c4b5fd}
+.qec-err[data-err="z"].active{background:rgba(34,211,238,.18);border-color:var(--accent-2);color:#67e8f9}
+
+.qec-code-badge{
+  margin:0 0 12px;padding:8px 14px;border-radius:8px;font-size:.85rem;font-weight:600;
+  background:var(--surface-2);border:1px solid var(--border);color:var(--muted);text-align:center;
+}
+.qec-code-badge.shor{
+  background:linear-gradient(90deg,rgba(124,58,237,.18),rgba(34,211,238,.18));
+  border-color:var(--accent-2);color:var(--text);
+}
+
 .qec-stage{
   background:var(--bg-2);border:1px solid var(--border);border-radius:12px;
   padding:14px;margin-bottom:14px;
@@ -962,6 +980,29 @@ p{margin:.4em 0}
   display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--muted);
 }
 .qec-row .qec-track.flip{background:linear-gradient(90deg,var(--surface-2),rgba(239,68,68,.35),var(--surface-2));color:#fca5a5;font-weight:600;animation:flipPop .4s}
+
+/* ---- Shor 9-qubit block view ---- */
+.qec-channel.shor{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:700px){.qec-channel.shor{grid-template-columns:1fr}}
+.qec-block{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+  padding:10px;display:flex;flex-direction:column;gap:6px;
+}
+.qec-block.signflip{border-color:var(--accent-2);box-shadow:0 0 0 1px rgba(34,211,238,.25) inset}
+.qec-block-head{
+  display:flex;flex-direction:column;gap:2px;font-size:.74rem;color:var(--muted);
+  font-family:'JetBrains Mono',monospace;padding-bottom:4px;border-bottom:1px dashed var(--border);
+}
+.qec-bsign{font-size:.72rem;font-weight:700;color:var(--success)}
+.qec-bsign.flip{color:var(--accent-2)}
+.qec-row.mini{grid-template-columns:auto 1fr;gap:8px;padding:5px 8px;background:var(--bg-2)}
+.qec-block-status{font-size:.72rem;color:var(--muted);text-align:center;padding-top:2px}
+.qec-eb{
+  display:inline-block;padding:1px 7px;border-radius:5px;font-size:.78rem;font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+}
+.qec-eb.x{background:rgba(124,58,237,.28);color:#c4b5fd;border:1px solid var(--accent)}
+.qec-eb.z{background:rgba(34,211,238,.22);color:#67e8f9;border:1px solid var(--accent-2)}
 
 .qec-decode-row{
   text-align:center;padding:10px;background:var(--surface-2);border-radius:8px;

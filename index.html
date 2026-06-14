@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>QuantumLab Beginner — Learn Quantum Computing Visually</title>
-<link rel="stylesheet" href="style.css?v=20260524g" />
+<link rel="stylesheet" href="style.css?v=20260614b" />
 </head>
 <body>
 
@@ -1402,7 +1402,7 @@ If f(x) = 1:
       </div>
 
       <div class="card try-it">
-        <h3>Try it · 3-qubit bit-flip code</h3>
+        <h3>Try it · bit-flip &amp; phase-flip codes</h3>
 
         <div class="qec-controls">
           <div>
@@ -1410,14 +1410,21 @@ If f(x) = 1:
             <button class="qec-bit" data-bit="0">|0⟩</button>
             <button class="qec-bit active" data-bit="1">|1⟩</button>
           </div>
+          <div>
+            <span class="muted">Error channel:</span>
+            <button class="qec-err active" data-err="x">⚡ Bit-flip X</button>
+            <button class="qec-err" data-err="z">🌀 Phase-flip Z</button>
+          </div>
           <div class="qec-noise-ctrl">
-            <label>Per-qubit flip probability: <b><span id="qec-noise-v">15</span>%</b></label>
+            <label>Per-qubit error probability: <b><span id="qec-noise-v">15</span>%</b></label>
             <input type="range" min="0" max="100" value="15" id="qec-noise" class="slider"/>
           </div>
         </div>
 
+        <div class="qec-code-badge" id="qec-code-badge">Active code: 3-qubit bit-flip · enable phase-flip to upgrade to Shor</div>
+
         <div class="qec-stage">
-          <div class="qec-section-title">① Encode  →  ② Channel (noise)  →  ③ Majority vote</div>
+          <div class="qec-section-title" id="qec-flow">① Encode  →  ② Channel (noise)  →  ③ Majority vote</div>
           <div class="qec-channel" id="qec-channel"></div>
           <div class="qec-decode-row">
             Decoded logical bit: <span class="qec-decoded" id="qec-decoded">|1⟩</span>
@@ -1436,11 +1443,11 @@ If f(x) = 1:
             <span class="qec-stat-val" id="qec-bare">—</span>
           </div>
           <div class="qec-stat-row">
-            <span class="qec-stat-label">3-qubit code error rate</span>
+            <span class="qec-stat-label" id="qec-code-label">3-qubit code error rate</span>
             <div class="qec-stat-bar"><div class="qec-stat-fill code" id="qec-coded-bar"></div></div>
             <span class="qec-stat-val" id="qec-coded">—</span>
           </div>
-          <p class="muted">Theoretical coded rate = 3p²(1−p) + p³ = <b id="qec-theo">—</b>.
+          <p class="muted" id="qec-theo-line">Theoretical coded rate = 3p²(1−p) + p³ = <b id="qec-theo">—</b>.
             QEC helps only when p &lt; 50% — above that the redundant qubits hurt more than they help.</p>
         </div>
       </div>
@@ -3184,6 +3191,6 @@ if balanced:  data → |1⟩   →   measurement = 1</pre>
 
 <div id="toast" class="toast"></div>
 
-<script src="script.js?v=20260524g"></script>
+<script src="script.js?v=20260614b"></script>
 </body>
 </html>
