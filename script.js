@@ -2801,8 +2801,17 @@ function initAlgorithms(){
 
     function drawCircuit(){
       circEl.innerHTML = `
-        <div class="dc-row"><span class="dc-wire-label">q₀ (data)</span>   <span class="dc-init">|0⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">Uƒ</span> <span class="dc-gate">H</span> <span class="dc-meter">📏</span></div>
-        <div class="dc-row"><span class="dc-wire-label">q₁ (ancilla)</span><span class="dc-init">|1⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">Uƒ</span> <span class="dc-empty"></span> <span class="dc-empty"></span></div>
+        <div class="dc-grid">
+          <span class="dc-wire-label" style="grid-area:1/1">q₀ (data)</span>
+          <span class="dc-init"  style="grid-area:1/2">|0⟩</span>
+          <span class="dc-gate"  style="grid-area:1/3">H</span>
+          <span class="dc-oracle dc-oracle-span" style="grid-area:1/4/3/5" title="Oracle U_f — one 2-qubit gate; its truth table encodes the chosen f">Uƒ</span>
+          <span class="dc-gate"  style="grid-area:1/5">H</span>
+          <span class="dc-meter" style="grid-area:1/6">M</span>
+          <span class="dc-wire-label" style="grid-area:2/1">q₁ (ancilla)</span>
+          <span class="dc-init"  style="grid-area:2/2">|1⟩</span>
+          <span class="dc-gate"  style="grid-area:2/3">H</span>
+        </div>
       `;
     }
     drawCircuit();

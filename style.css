@@ -1427,6 +1427,14 @@ p{margin:.4em 0}
   font-size:.92rem;
 }
 .dc-row{display:flex;align-items:center;gap:10px;padding:6px 0}
+.dc-grid{
+  display:grid;grid-template-columns:auto auto auto auto auto auto;
+  gap:10px;align-items:center;justify-content:start;
+}
+.dc-oracle-span{
+  align-self:stretch;display:flex;align-items:center;justify-content:center;
+  font-size:1.15rem;padding:4px 22px;
+}
 .dc-wire-label{color:var(--muted);min-width:96px;font-size:.82rem}
 .dc-init{
   background:var(--surface-2);padding:4px 8px;border-radius:6px;
@@ -1441,8 +1449,8 @@ p{margin:.4em 0}
   padding:4px 14px;border-radius:6px;font-weight:700;
 }
 .dc-meter{
-  background:var(--surface-2);padding:4px 10px;border-radius:6px;
-  border:1px solid var(--border);
+  background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;
+  padding:4px 12px;border-radius:6px;font-weight:700;text-align:center;
 }
 .dc-empty{flex:1}
 

@@ -1828,8 +1828,17 @@ P(1) = |⟨1|+⟩|² = (1/√2)² = 1/2</pre>
 
           <h4 class="algo-section">Simulator</h4>
           <div class="deutsch-circuit">
-            <div class="dc-row"><span class="dc-wire-label">data ×n</span><span class="dc-init">|0⟩</span> <span class="dc-gate">H<sup>⊗n</sup></span> <span class="dc-oracle">Uƒ</span> <span class="dc-gate">H<sup>⊗n</sup></span> <span class="dc-meter">📏 → s</span></div>
-            <div class="dc-row"><span class="dc-wire-label">ancilla</span><span class="dc-init">|1⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">Uƒ</span> <span class="dc-empty"></span> <span class="dc-empty"></span></div>
+            <div class="dc-grid">
+              <span class="dc-wire-label" style="grid-area:1/1">data ×n</span>
+              <span class="dc-init"  style="grid-area:1/2">|0⟩</span>
+              <span class="dc-gate"  style="grid-area:1/3">H<sup>⊗n</sup></span>
+              <span class="dc-oracle dc-oracle-span" style="grid-area:1/4/3/5">Uƒ</span>
+              <span class="dc-gate"  style="grid-area:1/5">H<sup>⊗n</sup></span>
+              <span class="dc-meter" style="grid-area:1/6">M → s</span>
+              <span class="dc-wire-label" style="grid-area:2/1">ancilla</span>
+              <span class="dc-init"  style="grid-area:2/2">|1⟩</span>
+              <span class="dc-gate"  style="grid-area:2/3">H</span>
+            </div>
           </div>
           <p class="no-sim-note">No interactive sim for BV yet — see the Deutsch (1-bit) tab
             for the same H–O<sub>f</sub>–H pattern animated.</p>
@@ -1878,8 +1887,17 @@ P(1) = |⟨1|+⟩|² = (1/√2)² = 1/2</pre>
 
           <h4 class="algo-section">Simulator</h4>
           <div class="deutsch-circuit">
-            <div class="dc-row"><span class="dc-wire-label">input ×n</span><span class="dc-init">|0⟩</span> <span class="dc-gate">H<sup>⊗n</sup></span> <span class="dc-oracle">U<sub>f</sub></span> <span class="dc-gate">H<sup>⊗n</sup></span> <span class="dc-meter">📏 → y</span></div>
-            <div class="dc-row"><span class="dc-wire-label">output ×n</span><span class="dc-init">|0⟩</span> <span class="dc-empty"></span> <span class="dc-oracle">U<sub>f</sub></span> <span class="dc-empty"></span> <span class="dc-meter">📏</span></div>
+            <div class="dc-grid">
+              <span class="dc-wire-label" style="grid-area:1/1">input ×n</span>
+              <span class="dc-init"  style="grid-area:1/2">|0⟩</span>
+              <span class="dc-gate"  style="grid-area:1/3">H<sup>⊗n</sup></span>
+              <span class="dc-oracle dc-oracle-span" style="grid-area:1/4/3/5">U<sub>f</sub></span>
+              <span class="dc-gate"  style="grid-area:1/5">H<sup>⊗n</sup></span>
+              <span class="dc-meter" style="grid-area:1/6">M → y</span>
+              <span class="dc-wire-label" style="grid-area:2/1">output ×n</span>
+              <span class="dc-init"  style="grid-area:2/2">|0⟩</span>
+              <span class="dc-meter" style="grid-area:2/6">M</span>
+            </div>
           </div>
           <p class="no-sim-note">No interactive sim yet — Simon's needs a randomly generated
             2-to-1 oracle and post-processing via Gaussian elimination over GF(2).</p>
@@ -2244,9 +2262,9 @@ if balanced:  data → |1⟩   →   measurement = 1</pre>
 
           <h4 class="algo-section">Simulator</h4>
           <div class="deutsch-circuit">
-            <div class="dc-row"><span class="dc-wire-label">q₀</span><span class="dc-init">|0⟩</span> <span class="dc-gate">U(θ)</span> <span class="dc-meter">📏 ⟨Ĥ⟩</span></div>
-            <div class="dc-row"><span class="dc-wire-label">q₁</span><span class="dc-init">|0⟩</span> <span class="dc-gate">U(θ)</span> <span class="dc-meter">📏 ⟨Ĥ⟩</span></div>
-            <div class="dc-row"><span class="dc-wire-label">⋮</span><span class="dc-init">|0⟩</span> <span class="dc-gate">U(θ)</span> <span class="dc-meter">📏 ⟨Ĥ⟩</span></div>
+            <div class="dc-row"><span class="dc-wire-label">q₀</span><span class="dc-init">|0⟩</span> <span class="dc-gate">U(θ)</span> <span class="dc-meter">M ⟨Ĥ⟩</span></div>
+            <div class="dc-row"><span class="dc-wire-label">q₁</span><span class="dc-init">|0⟩</span> <span class="dc-gate">U(θ)</span> <span class="dc-meter">M ⟨Ĥ⟩</span></div>
+            <div class="dc-row"><span class="dc-wire-label">⋮</span><span class="dc-init">|0⟩</span> <span class="dc-gate">U(θ)</span> <span class="dc-meter">M ⟨Ĥ⟩</span></div>
           </div>
           <p class="no-sim-note">No interactive sim yet — a real VQE loop requires a chosen
             ansatz (UCCSD, hardware-efficient, …), Pauli decomposition of Ĥ, and a classical
@@ -2298,9 +2316,9 @@ if balanced:  data → |1⟩   →   measurement = 1</pre>
 
           <h4 class="algo-section">Simulator</h4>
           <div class="deutsch-circuit">
-            <div class="dc-row"><span class="dc-wire-label">q₀</span><span class="dc-init">|0⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">e<sup>−iγH<sub>C</sub></sup></span> <span class="dc-gate">e<sup>−iβH<sub>M</sub></sup></span> <span class="dc-meter">📏</span></div>
-            <div class="dc-row"><span class="dc-wire-label">q₁</span><span class="dc-init">|0⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">e<sup>−iγH<sub>C</sub></sup></span> <span class="dc-gate">e<sup>−iβH<sub>M</sub></sup></span> <span class="dc-meter">📏</span></div>
-            <div class="dc-row"><span class="dc-wire-label">⋮</span><span class="dc-init">|0⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">e<sup>−iγH<sub>C</sub></sup></span> <span class="dc-gate">e<sup>−iβH<sub>M</sub></sup></span> <span class="dc-meter">📏</span></div>
+            <div class="dc-row"><span class="dc-wire-label">q₀</span><span class="dc-init">|0⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">e<sup>−iγH<sub>C</sub></sup></span> <span class="dc-gate">e<sup>−iβH<sub>M</sub></sup></span> <span class="dc-meter">M</span></div>
+            <div class="dc-row"><span class="dc-wire-label">q₁</span><span class="dc-init">|0⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">e<sup>−iγH<sub>C</sub></sup></span> <span class="dc-gate">e<sup>−iβH<sub>M</sub></sup></span> <span class="dc-meter">M</span></div>
+            <div class="dc-row"><span class="dc-wire-label">⋮</span><span class="dc-init">|0⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">e<sup>−iγH<sub>C</sub></sup></span> <span class="dc-gate">e<sup>−iβH<sub>M</sub></sup></span> <span class="dc-meter">M</span></div>
           </div>
           <p class="no-sim-note">No interactive sim yet — a real QAOA run needs a chosen
             graph/instance, p-layer depth, and a classical optimiser feedback loop.</p>
