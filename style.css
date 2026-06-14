@@ -796,6 +796,15 @@ p{margin:.4em 0}
   width:2px;background:var(--accent);justify-self:center;
   align-self:stretch;z-index:1;
 }
+/* classical-control wire: double line (quantum→classical convention) */
+.mc-ccline{
+  width:5px;background:transparent;justify-self:center;align-self:stretch;z-index:1;
+  border-left:1.5px solid #94a3b8;border-right:1.5px solid #94a3b8;
+}
+.mc-cctrl{
+  width:11px;height:11px;border-radius:50%;background:#94a3b8;
+  box-shadow:0 0 6px rgba(148,163,184,.7);
+}
 .mc-caption{font-size:.78rem;color:var(--muted);margin-top:8px;font-style:italic}
 
 /* ===================== BB84 (Quantum Cryptography) ===================== */

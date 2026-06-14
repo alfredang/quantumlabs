@@ -2528,6 +2528,21 @@ function renderMiniCircuit(host, spec, caption){
         cell.appendChild(box);
         grid.appendChild(cell);
       } else {
+        // classical-control wire from a measured qubit down to this gate
+        if(p.cc !== undefined){
+          const lo = Math.min(p.cc, p.q), hi = Math.max(p.cc, p.q);
+          const cl = document.createElement('div');
+          cl.className = 'mc-ccline';
+          cl.style.gridRow = `${lo+1} / ${hi+2}`;
+          cl.style.gridColumn = col;
+          grid.appendChild(cl);
+          const node = document.createElement('div');
+          node.className = 'mc-cell';
+          node.style.gridRow = p.cc+1;
+          node.style.gridColumn = col;
+          node.innerHTML = '<span class="mc-cctrl"></span>';
+          grid.appendChild(node);
+        }
         const cell = document.createElement('div');
         cell.className = 'mc-cell';
         cell.style.gridRow = p.q+1;
@@ -2595,11 +2610,11 @@ const ALGO_CIRCUITS = {
         [{q:0, gate:'H'}],
         [{q:0, gate:'M', cls:'meas'}],
         [{q:1, gate:'M', cls:'meas'}],
-        [{q:2, gate:'X^m₂', cls:'cond'}],
-        [{q:2, gate:'Z^m₁', cls:'cond'}],
+        [{q:2, gate:'X^m₂', cls:'cond', cc:1}],
+        [{q:2, gate:'Z^m₁', cls:'cond', cc:0}],
       ],
     },
-    caption: 'Cols 1–2 build the shared Bell pair on q₁/q₂. Cols 3–4 are Alice\'s Bell-basis change. Cols 5–6 measure Alice\'s qubits → m₁,m₂. Cols 7–8 are Bob\'s classically-controlled corrections — q₂ now holds |ψ⟩.',
+    caption: 'Cols 1–2 build the shared Bell pair on q₁/q₂. Cols 3–4 are Alice\'s Bell-basis change. Cols 5–6 measure Alice\'s qubits → m₁,m₂. Cols 7–8 are Bob\'s classically-controlled corrections (double wires): X is triggered by m₂ (q₁\'s outcome), Z by m₁ (q₀\'s outcome) — q₂ now holds |ψ⟩.',
   },
   qft: {
     spec: {
