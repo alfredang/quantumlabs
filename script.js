@@ -2801,8 +2801,8 @@ function initAlgorithms(){
 
     function drawCircuit(){
       circEl.innerHTML = `
-        <div class="dc-row"><span class="dc-wire-label">q₀ (data)</span>   <span class="dc-init">|0⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">Oƒ</span> <span class="dc-gate">H</span> <span class="dc-meter">📏</span></div>
-        <div class="dc-row"><span class="dc-wire-label">q₁ (ancilla)</span><span class="dc-init">|1⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">Oƒ</span> <span class="dc-empty"></span> <span class="dc-empty"></span></div>
+        <div class="dc-row"><span class="dc-wire-label">q₀ (data)</span>   <span class="dc-init">|0⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">Uƒ</span> <span class="dc-gate">H</span> <span class="dc-meter">📏</span></div>
+        <div class="dc-row"><span class="dc-wire-label">q₁ (ancilla)</span><span class="dc-init">|1⟩</span> <span class="dc-gate">H</span> <span class="dc-oracle">Uƒ</span> <span class="dc-empty"></span> <span class="dc-empty"></span></div>
       `;
     }
     drawCircuit();
@@ -2823,7 +2823,7 @@ function initAlgorithms(){
       const lines = [
         `① Pick: ${f.label}  →  f(0)=${f0}, f(1)=${f1}.`,
         `② Prepare |ψ₀⟩ = |0⟩|1⟩, then H⊗H  →  |ψ₁⟩ = |+⟩|−⟩.`,
-        `③ Oracle (phase kickback):  Oƒ|x⟩|−⟩ = (−1)^f(x) |x⟩|−⟩.`,
+        `③ Oracle (phase kickback):  Uƒ|x⟩|−⟩ = (−1)^f(x) |x⟩|−⟩.`,
         `   ⟹  |ψ₂⟩ = (1/√2) [ (−1)^${f0} |0⟩ + (−1)^${f1} |1⟩ ] ⊗ |−⟩`,
         `④ Factor out (−1)^f(0):  data qubit = (1/√2) [ |0⟩ + (−1)^${d} |1⟩ ] = ${d===0?'|+⟩':'|−⟩'}.`,
         `⑤ H on data:  ${d===0?'H|+⟩ = |0⟩':'H|−⟩ = |1⟩'}.`,
