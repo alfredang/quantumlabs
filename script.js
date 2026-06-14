@@ -2198,10 +2198,10 @@ function initNoise(){
   renderEmpty();
 }
 
-// ----- Quantum Error Correction (adaptive: 3-qubit bit-flip ↔ Shor 9-qubit) -----
+// ----- Quantum Error Correction (3-step build-up: bit-flip → phase-flip → Shor) -----
 function initQEC(){
   let logical = '1';
-  let errX = true, errZ = false;          // active error channels
+  let mode = 'bit';                       // 'bit' | 'phase' | 'shor'
   const noiseSlider = document.getElementById('qec-noise');
   const noiseLbl    = document.getElementById('qec-noise-v');
   const channel = document.getElementById('qec-channel');
@@ -2215,9 +2215,6 @@ function initQEC(){
 
   noiseSlider.oninput = () => noiseLbl.textContent = noiseSlider.value;
 
-  // phase-flips can only be corrected by Shor's code → it auto-engages when Z is on
-  const shorActive = () => errZ;
-
   document.querySelectorAll('.qec-bit').forEach(b => {
     b.onclick = () => {
       logical = b.dataset.bit;
@@ -2226,19 +2223,16 @@ function initQEC(){
     };
   });
 
-  const errBtns = document.querySelectorAll('.qec-err');
-  errBtns.forEach(b => {
+  document.querySelectorAll('.qec-mode').forEach(b => {
     b.onclick = () => {
-      if(b.dataset.err === 'x') errX = !errX; else errZ = !errZ;
-      if(!errX && !errZ) errX = true;          // keep at least one channel live
-      errBtns.forEach(x => x.classList.toggle('active',
-        (x.dataset.err==='x' && errX) || (x.dataset.err==='z' && errZ)));
+      mode = b.dataset.mode;
+      document.querySelectorAll('.qec-mode').forEach(x => x.classList.toggle('active', x===b));
       runOnce();
     };
   });
 
-  // ---------- 3-qubit bit-flip code (single shot) ----------
-  function run3(){
+  // ---------- Step ① 3-qubit bit-flip code ----------
+  function runBit(){
     const bit = +logical;
     const p = +noiseSlider.value / 100;
     const flips = [0,1,2].map(() => Math.random() < p);
@@ -2254,7 +2248,7 @@ function initQEC(){
       row.innerHTML = `
         <span class="qec-label">q${i}</span>
         <span class="qec-state in">|${bit}⟩</span>
-        <span class="qec-track${f?' flip':''}">${f ? '⚡ bit-flip' : 'clean'}</span>
+        <span class="qec-track${f?' flip x':''}">${f ? '⚡ bit-flip (X)' : 'clean'}</span>
         <span class="qec-state${f?' err':''}">|${after[i]}⟩</span>`;
       channel.appendChild(row);
     }
@@ -2263,13 +2257,51 @@ function initQEC(){
     decoded.className = 'qec-decoded ' + (dec === bit ? 'ok' : 'err');
     const fc = flips.filter(Boolean).length;
     msg.className = 'qec-msg';
-    msg.textContent = dec === bit
-      ? `✓ Decoded correctly. ${fc} of 3 qubits flipped — majority vote saved the logical bit.`
-      : `✗ Decoding failed. ${fc} of 3 qubits flipped — too many for the 3-qubit code (it can only fix 1 flip).`;
+    msg.innerHTML = dec === bit
+      ? `✓ <b>Recovered |${bit}⟩.</b> ${fc} of 3 qubits hit by a bit-flip — but 2 of 3 still agree, so the <b>majority vote</b> wins.`
+      : `✗ <b>Failed.</b> ${fc} of 3 qubits flipped — with 2+ flips the majority points the wrong way. This code fixes only <b>one</b> bit-flip.`;
   }
 
-  // ---------- Shor 9-qubit code (single shot) ----------
+  // ---------- Step ② 3-qubit phase-flip code ----------
+  // Same majority-vote trick, but in the |+⟩/|−⟩ basis: |0⟩→|+++⟩, |1⟩→|−−−⟩.
+  // A Z error swaps |+⟩↔|−⟩, exactly like X swaps |0⟩↔|1⟩.
+  function runPhase(){
+    const bit = +logical;
+    const sc = ['+','−'];
+    const start = bit;                    // 0 → '+', 1 → '−'
+    const p = +noiseSlider.value / 100;
+    const flips = [0,1,2].map(() => Math.random() < p);
+    const after = [0,1,2].map(i => flips[i] ? 1-start : start);
+    const minusCount = after.reduce((a,b)=>a+b,0);   // how many ended as |−⟩
+    const dec = minusCount >= 2 ? 1 : 0;             // majority |−⟩ → logical 1
+
+    channel.className = 'qec-channel';
+    channel.innerHTML = '';
+    for(let i=0;i<3;i++){
+      const f = flips[i];
+      const row = document.createElement('div');
+      row.className = 'qec-row';
+      row.innerHTML = `
+        <span class="qec-label">q${i}</span>
+        <span class="qec-state in">|${sc[start]}⟩</span>
+        <span class="qec-track${f?' flip z':''}">${f ? '🌀 phase-flip (Z)' : 'clean'}</span>
+        <span class="qec-state${f?' err':''}">|${sc[after[i]]}⟩</span>`;
+      channel.appendChild(row);
+    }
+
+    decoded.textContent = `|${dec}⟩`;
+    decoded.className = 'qec-decoded ' + (dec === bit ? 'ok' : 'err');
+    const fc = flips.filter(Boolean).length;
+    msg.className = 'qec-msg';
+    msg.innerHTML = dec === bit
+      ? `✓ <b>Recovered |${bit}⟩.</b> ${fc} of 3 qubits phase-flipped (|+⟩↔|−⟩) — the <b>sign majority vote</b> still wins. `
+        + `It's the very same code as ①, just written in the |+⟩/|−⟩ basis where Z looks like a flip.`
+      : `✗ <b>Failed.</b> ${fc} of 3 signs flipped — 2+ phase-flips overwhelm the sign majority. Fixes only <b>one</b> phase-flip.`;
+  }
+
+  // ---------- Step ③ Shor 9-qubit code (bit-flip blocks nested in a phase-flip code) ----------
   function runShor(){
+    const errX = true, errZ = true;
     const bit = +logical;
     const s0 = bit ? -1 : +1;                 // initial sign of every block
     const p = +noiseSlider.value / 100;
@@ -2323,7 +2355,9 @@ function initQEC(){
       });
       const st = document.createElement('div');
       st.className = 'qec-block-status';
-      st.textContent = `bit-flips: ${bi.xc} (${bi.xc<=1?'corrected':'absorbed'}) · phase parity: ${bi.zc%2===0?'even → sign safe':'odd → sign flips'}`;
+      const inner = bi.xc === 0 ? 'no bit-flips' : `${bi.xc} bit-flip${bi.xc>1?'s':''} ${bi.xc<=1?'→ Step ① fixes it':'(too many here)'}`;
+      const outer = bi.signFlip ? 'sign FLIPPED ✗' : 'sign OK ✓';
+      st.innerHTML = `inner code: ${inner}<br>this block's ${outer}`;
       wrap.appendChild(st);
       channel.appendChild(wrap);
     });
@@ -2340,18 +2374,24 @@ function initQEC(){
   }
 
   function runOnce(){
-    if(shorActive()){
-      flow.textContent = '① Encode (9 qubits, 3 blocks)  →  ② Channel (X & Z)  →  ③ Inner bit-flip fix + outer sign vote';
-      badge.textContent = 'Active code: Shor 9-qubit · corrects bit-flips AND phase-flips';
+    if(mode === 'shor'){
+      flow.textContent = '① Encode (9 qubits = 3 bit-flip blocks)  →  ② X & Z noise  →  ③ Each block fixes bit-flips, then the 3 block-signs vote';
+      badge.innerHTML = 'Code ③ — <b>Shor</b>: three Step-① bit-flip blocks, wrapped in a Step-② phase-flip code. Fixes any single error of either kind.';
       badge.className = 'qec-code-badge shor';
       legend.hidden = false;
       runShor();
-    } else {
-      flow.textContent = '① Encode  →  ② Channel (noise)  →  ③ Majority vote';
-      badge.textContent = 'Active code: 3-qubit bit-flip · enable phase-flip to upgrade to Shor';
+    } else if(mode === 'phase'){
+      flow.textContent = '① Encode in |+⟩/|−⟩  →  ② One qubit may phase-flip (|+⟩↔|−⟩)  →  ③ Sign majority vote';
+      badge.innerHTML = 'Code ② — protects against <b>phase-flips</b>, using 3 qubits in the |+⟩/|−⟩ basis. Same majority-vote trick as ①, just rotated.';
       badge.className = 'qec-code-badge';
       legend.hidden = true;
-      run3();
+      runPhase();
+    } else {
+      flow.textContent = '① Encode (copy to 3 qubits)  →  ② One qubit may bit-flip  →  ③ Majority vote';
+      badge.innerHTML = 'Code ① — protects against <b>bit-flips</b> only, using 3 qubits and a majority vote.';
+      badge.className = 'qec-code-badge';
+      legend.hidden = true;
+      runBit();
     }
   }
 
@@ -2361,11 +2401,10 @@ function initQEC(){
     const p = +noiseSlider.value / 100, N = 1000;
     let bare = 0, code = 0;
 
-    if(shorActive()){
-      const pX = errX ? p : 0;
+    if(mode === 'shor'){
       for(let t=0;t<N;t++){
         // a lone qubit has no redundancy — any X or Z disturbs its state
-        if(Math.random() < (1-(1-pX)*(1-p))) bare++;
+        if(Math.random() < (1-(1-p)*(1-p))) bare++;
         let sf = 0;
         for(let b=0;b<3;b++){
           let zc = 0;
@@ -2390,9 +2429,10 @@ function initQEC(){
         if(f >= 2) code++;
       }
       const theo = 3*p*p*(1-p) + p*p*p;
-      codeLabel.textContent = '3-qubit code error rate';
+      const kind = mode === 'phase' ? 'phase-flip' : 'bit-flip';
+      codeLabel.textContent = `3-qubit ${kind} code error rate`;
       theoLine.innerHTML = `Theoretical coded rate = 3p²(1−p) + p³ = <b>${(theo*100).toFixed(2)}%</b>. `
-        + `QEC helps only when p &lt; 50% — above that the redundant qubits hurt more than they help.`;
+        + `Both 3-qubit codes share this curve — they beat a bare qubit whenever p &lt; 50%.`;
       var bareRate = bare/N, codeRate = code/N;
     }
 

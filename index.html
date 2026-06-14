@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>QuantumLab Beginner — Learn Quantum Computing Visually</title>
-<link rel="stylesheet" href="style.css?v=20260614c" />
+<link rel="stylesheet" href="style.css?v=20260614e" />
 </head>
 <body>
 
@@ -1402,7 +1402,14 @@ If f(x) = 1:
       </div>
 
       <div class="card try-it">
-        <h3>Try it · bit-flip &amp; phase-flip codes</h3>
+        <h3>Try it · build up the codes step by step</h3>
+
+        <div class="qec-modesel">
+          <span class="muted">Start here →</span>
+          <button class="qec-mode active" data-mode="bit">① Bit-flips · 3 qubits</button>
+          <button class="qec-mode" data-mode="phase">② Phase-flips · 3 qubits</button>
+          <button class="qec-mode" data-mode="shor">③ Both · Shor 9 qubits</button>
+        </div>
 
         <div class="qec-controls">
           <div>
@@ -1410,18 +1417,13 @@ If f(x) = 1:
             <button class="qec-bit" data-bit="0">|0⟩</button>
             <button class="qec-bit active" data-bit="1">|1⟩</button>
           </div>
-          <div>
-            <span class="muted">Error channel:</span>
-            <button class="qec-err active" data-err="x">⚡ Bit-flip X</button>
-            <button class="qec-err" data-err="z">🌀 Phase-flip Z</button>
-          </div>
           <div class="qec-noise-ctrl">
             <label>Per-qubit error probability: <b><span id="qec-noise-v">15</span>%</b></label>
             <input type="range" min="0" max="100" value="15" id="qec-noise" class="slider"/>
           </div>
         </div>
 
-        <div class="qec-code-badge" id="qec-code-badge">Active code: 3-qubit bit-flip · enable phase-flip to upgrade to Shor</div>
+        <div class="qec-code-badge" id="qec-code-badge">Code ① — protects against bit-flips only, using 3 qubits and a majority vote.</div>
 
         <div class="qec-stage">
           <div class="qec-section-title" id="qec-flow">① Encode  →  ② Channel (noise)  →  ③ Majority vote</div>
@@ -1460,11 +1462,11 @@ If f(x) = 1:
 
       <div class="card lesson">
         <h3>Circuits &amp; proofs</h3>
-        <p>The demo above uses a classical majority vote. The three derivations below show the
-          real QEC machinery — <b>encoding circuits</b>, <b>syndrome measurement</b> (which detects
-          an error <i>without</i> measuring the protected amplitudes α, β), and the algebra that
-          proves recovery is exact. We build up from bit-flips, to phase-flips, to Shor's
-          9-qubit code that beats <i>any</i> single-qubit error.</p>
+        <p>The demo above uses a plain majority vote. The three derivations below show the
+          real circuits — <b>encode</b>, <b>noisy channel</b>, then a <b>coherent recovery</b>
+          (CNOTs + a Toffoli) that fixes the error <i>without</i> ever measuring the protected
+          amplitudes α, β. We build up from bit-flips, to phase-flips, to Shor's 9-qubit code
+          that beats <i>any</i> single-qubit error.</p>
 
         <!-- ----------- 1. BIT-FLIP CODE ----------- -->
         <details class="tele-derivation">
@@ -1474,58 +1476,58 @@ If f(x) = 1:
               <b>|ψ⟩ = α|0⟩ + β|1⟩</b> against a single <b>X</b> (bit-flip) error on any of three
               physical qubits, without ever learning α or β.</p>
 
-            <p><span class="label">Encoding circuit</span> Two CNOTs copy the bit value (not the
-              amplitudes — that would violate no-cloning) into two ancilla qubits:</p>
-            <pre class="math-block">q0 : |ψ⟩ ──●────●──            ┌ |0⟩_L = |000⟩
-           │    │       ⟶    ┤
-q1 : |0⟩ ──⊕────┼──            └ |1⟩_L = |111⟩
-                │
-q2 : |0⟩ ───────⊕──     α|0⟩+β|1⟩  ⟶  α|000⟩ + β|111⟩</pre>
+            <p><span class="label">The full circuit</span> Two CNOTs <b>encode</b> (copy the bit
+              value, not the amplitudes — that would violate no-cloning). After the noisy channel,
+              two more CNOTs <b>un-copy</b>, and a final <b>Toffoli</b> (controlled-controlled-NOT)
+              flips the data qubit back. No measurement is ever needed:</p>
+            <pre class="math-block">         ──── ENCODE ────      NOISE        ──── DECODE ────    RECOVER
+q0 |ψ⟩ ──────●────●─────────[         ]────────●────●─────────────⊕──────  |ψ⟩
+             │    │         [ flip one ]       │    │             │
+q1 |0⟩ ──────⊕────┼─────────[ bit (X)  ]───────⊕────┼─────────────●──────
+                  │         [         ]              │             │
+q2 |0⟩ ───────────⊕─────────[         ]─────────────⊕─────────────●──────
 
-            <p><span class="label">Step 1 — Encoded state</span> CNOT(q0→q1) then CNOT(q0→q2):</p>
+state:    α|000⟩+β|111⟩    α|100⟩+β|011⟩     α|111⟩+β|011⟩    α|011⟩+β|111⟩
+                          (top qubit flips)                   = |ψ⟩ ⊗ |11⟩</pre>
+
+            <p><span class="label">Step 1 — Encode</span> CNOT(q0→q1) then CNOT(q0→q2):</p>
             <pre class="math-block">(α|0⟩ + β|1⟩)|0⟩|0⟩
   ──CNOT₀₁──►  α|00⟩|0⟩ + β|11⟩|0⟩
   ──CNOT₀₂──►  α|000⟩ + β|111⟩   ≡  |ψ⟩_L</pre>
 
-            <p><span class="label">Step 2 — The channel injects one error</span>
-              say <b>X₁</b> flips the middle qubit:</p>
-            <pre class="math-block">X₁ |ψ⟩_L  =  α|010⟩ + β|101⟩</pre>
+            <p><span class="label">Step 2 — Noise flips the top qubit</span>
+              the channel applies <b>X₀</b>:</p>
+            <pre class="math-block">X₀ |ψ⟩_L  =  α|100⟩ + β|011⟩</pre>
 
-            <p><span class="label">Step 3 — Syndrome measurement</span> Measure the two
-              <b>stabilizers</b> Z₀Z₁ and Z₁Z₂ using ancillas — these read out <i>parity</i>
-              (do neighbours agree?) and commute with the data, so α, β are untouched:</p>
-            <pre class="math-block">q0 ──●──────────────────
-q1 ──┼──●─────●─────────
-q2 ──┼──┼─────┼────●────
-     │  │     │    │
-a1 ──⊕──⊕─────┼────┼──── ➤ measure s₁  (parity of q0,q1  = Z₀Z₁)
-a2 ───────────⊕────⊕──── ➤ measure s₂  (parity of q1,q2  = Z₁Z₂)</pre>
+            <p><span class="label">Step 3 — Decode: the same two CNOTs un-copy</span>
+              CNOT(q0→q1), CNOT(q0→q2). The error gets routed into the two helper qubits:</p>
+            <pre class="math-block">α|100⟩ + β|011⟩
+  ──CNOT₀₁,₀₂──►  α|111⟩ + β|011⟩         (q0 controls, so only the α term flips q1,q2)</pre>
+            <p>Now both branches share the <b>helper pattern q1q2 = 11</b>, with the data qubit q0
+              holding the <i>flipped</i> value α|1⟩ + β|0⟩. That "11" is the <b>syndrome</b> — it
+              announces "the top qubit was hit" without revealing α or β.</p>
 
-            <p>Because Z|0⟩ = +|0⟩ and Z|1⟩ = −|1⟩, each Pauli error gives a <i>unique</i>
-              two-bit syndrome — and crucially the <b>same</b> eigenvalue on both the α and β
-              branches, so the measurement never collapses the superposition:</p>
+            <p><span class="label">Step 4 — Recover: one Toffoli</span> controls = q1, q2; target = q0.
+              It flips q0 <i>only</i> when both helpers are 1:</p>
+            <pre class="math-block">Toffoli (α|111⟩ + β|011⟩) = α|011⟩ + β|111⟩ = (α|0⟩ + β|1⟩) ⊗ |11⟩ = |ψ⟩   ✓</pre>
+
+            <p><span class="label">Why one Toffoli fixes <i>any</i> single flip</span>
+              the decode CNOTs always push the error into the helpers, so the data qubit q0 only
+              ends up wrong when the helper pattern is exactly <b>11</b> — and that is the one case
+              the Toffoli acts on:</p>
             <table class="synd-table">
-              <tr><th>Error</th><th>s₁ = Z₀Z₁</th><th>s₂ = Z₁Z₂</th><th>Syndrome</th><th>Fix</th></tr>
-              <tr><td>I (none)</td><td>+1</td><td>+1</td><td>0 0</td><td>—</td></tr>
-              <tr><td>X₀</td><td>−1</td><td>+1</td><td>1 0</td><td>X₀</td></tr>
-              <tr><td class="hl">X₁</td><td class="hl">−1</td><td class="hl">−1</td><td class="hl">1 1</td><td class="hl">X₁</td></tr>
-              <tr><td>X₂</td><td>+1</td><td>−1</td><td>0 1</td><td>X₂</td></tr>
+              <tr><th>Error</th><th>helpers q1q2 after decode</th><th>q0 wrong?</th><th>Toffoli</th></tr>
+              <tr><td>none</td><td>0 0</td><td>no</td><td>idle</td></tr>
+              <tr><td class="hl">X₀ (top)</td><td class="hl">1 1</td><td class="hl">yes</td><td class="hl">flips q0 back ✓</td></tr>
+              <tr><td>X₁ (middle)</td><td>1 0</td><td>no</td><td>idle</td></tr>
+              <tr><td>X₂ (bottom)</td><td>0 1</td><td>no</td><td>idle</td></tr>
             </table>
 
-            <p><span class="label">Step 4 — Check the X₁ branch</span> Apply Z₀Z₁ and Z₁Z₂ to
-              <b>α|010⟩ + β|101⟩</b>:</p>
-            <pre class="math-block">Z₀Z₁ |010⟩ = (+)(−)|010⟩ = −|010⟩      Z₀Z₁ |101⟩ = (−)(+)|101⟩ = −|101⟩   ⟹ s₁ = −1
-Z₁Z₂ |010⟩ = (−)(+)|010⟩ = −|010⟩      Z₁Z₂ |101⟩ = (+)(−)|101⟩ = −|101⟩   ⟹ s₂ = −1</pre>
-            <p>Syndrome (1 1) ⟹ the error sits on qubit 1. Both branches return the same
-              eigenvalue, so the state stays coherent.</p>
-
-            <p><span class="label">Step 5 — Correct</span> Apply X₁:</p>
-            <pre class="math-block">X₁ (α|010⟩ + β|101⟩) = α|000⟩ + β|111⟩ = |ψ⟩_L   ✓</pre>
-
-            <p><span class="label">Conclusion</span> Any <b>single</b> bit-flip is detected and
-              reversed exactly, for arbitrary α, β. The code fails only on ≥2 simultaneous flips —
+            <p><span class="label">Conclusion</span> Any <b>single</b> bit-flip is reversed exactly,
+              for arbitrary α, β, with no measurement — the Toffoli <i>is</i> the majority vote from
+              the demo above, done coherently. The code fails only on ≥2 simultaneous flips —
               probability <b>3p²(1−p) + p³</b>, which beats the bare rate <b>p</b> whenever
-              <b>p &lt; ½</b> (the curve in the demo above).</p>
+              <b>p &lt; ½</b>.</p>
           </div>
         </details>
 
@@ -3197,6 +3199,6 @@ if balanced:  data → |1⟩   →   measurement = 1</pre>
 
 <div id="toast" class="toast"></div>
 
-<script src="script.js?v=20260614c"></script>
+<script src="script.js?v=20260614e"></script>
 </body>
 </html>
