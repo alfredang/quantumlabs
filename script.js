@@ -2208,6 +2208,7 @@ function initQEC(){
   const decoded = document.getElementById('qec-decoded');
   const msg     = document.getElementById('qec-msg');
   const flow    = document.getElementById('qec-flow');
+  const legend  = document.getElementById('qec-legend');
   const badge   = document.getElementById('qec-code-badge');
   const codeLabel = document.getElementById('qec-code-label');
   const theoLine  = document.getElementById('qec-theo-line');
@@ -2293,33 +2294,36 @@ function initQEC(){
     const signFlips = info.filter(b => b.signFlip).length;
     const dec = signFlips >= 2 ? 1 - bit : bit;
 
+    const initC = s0 > 0 ? '+' : '−';            // every block starts with this sign
     channel.className = 'qec-channel shor';
     channel.innerHTML = '';
     info.forEach((bi, bx) => {
       const wrap = document.createElement('div');
       wrap.className = 'qec-block' + (bi.signFlip ? ' signflip' : '');
-      const sc = bi.sign > 0 ? '+' : '−';
+      const finalC = bi.sign > 0 ? '+' : '−';
+      const head = bi.signFlip
+        ? `(|000⟩ ${initC} |111⟩) → (|000⟩ <b>${finalC}</b> |111⟩)`
+        : `(|000⟩ ${initC} |111⟩)`;
       wrap.innerHTML = `<div class="qec-block-head">
-          <span>block ${bx+1} · (|000⟩ ${sc} |111⟩)</span>
+          <span>block ${bx+1} · ${head}</span>
           <span class="qec-bsign ${bi.signFlip?'flip':''}">${bi.signFlip ? '⟲ sign flipped' : 'sign held'}</span>
         </div>`;
       bi.qs.forEach(i => {
-        const badges = [];
-        if(xe[i]) badges.push('<span class="qec-eb x">⚡X</span>');
-        if(ze[i]) badges.push('<span class="qec-eb z">🌀Z</span>');
-        const hit = xe[i] || ze[i];
+        // each qubit independently rolls X and Z → clean / X / Z / Y(=both)
+        let label = 'clean', cls = '';
+        if(xe[i] && ze[i]){ label = '✦ Y · bit + phase'; cls = ' flip y'; }
+        else if(xe[i]){     label = '⚡ X · bit-flip';     cls = ' flip x'; }
+        else if(ze[i]){     label = '🌀 Z · phase-flip';   cls = ' flip z'; }
         const row = document.createElement('div');
         row.className = 'qec-row mini';
         row.innerHTML = `
           <span class="qec-label">q${i}</span>
-          <span class="qec-track${hit?' flip':''}">${badges.length ? badges.join(' ') : 'clean'}</span>`;
+          <span class="qec-track${cls}">${label}</span>`;
         wrap.appendChild(row);
       });
       const st = document.createElement('div');
       st.className = 'qec-block-status';
-      st.textContent = bi.xc <= 1
-        ? `${bi.xc} bit-flip → inner code corrected`
-        : `${bi.xc} bit-flips → absorbed locally (value safe)`;
+      st.textContent = `bit-flips: ${bi.xc} (${bi.xc<=1?'corrected':'absorbed'}) · phase parity: ${bi.zc%2===0?'even → sign safe':'odd → sign flips'}`;
       wrap.appendChild(st);
       channel.appendChild(wrap);
     });
@@ -2340,11 +2344,13 @@ function initQEC(){
       flow.textContent = '① Encode (9 qubits, 3 blocks)  →  ② Channel (X & Z)  →  ③ Inner bit-flip fix + outer sign vote';
       badge.textContent = 'Active code: Shor 9-qubit · corrects bit-flips AND phase-flips';
       badge.className = 'qec-code-badge shor';
+      legend.hidden = false;
       runShor();
     } else {
       flow.textContent = '① Encode  →  ② Channel (noise)  →  ③ Majority vote';
       badge.textContent = 'Active code: 3-qubit bit-flip · enable phase-flip to upgrade to Shor';
       badge.className = 'qec-code-badge';
+      legend.hidden = true;
       run3();
     }
   }

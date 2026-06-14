@@ -1004,6 +1004,22 @@ p{margin:.4em 0}
 .qec-eb.x{background:rgba(124,58,237,.28);color:#c4b5fd;border:1px solid var(--accent)}
 .qec-eb.z{background:rgba(34,211,238,.22);color:#67e8f9;border:1px solid var(--accent-2)}
 
+/* per-qubit error track colours in the Shor view */
+.qec-row.mini .qec-track{font-size:.78rem}
+.qec-row.mini .qec-track.flip.x{background:linear-gradient(90deg,var(--bg-2),rgba(124,58,237,.32),var(--bg-2));color:#c4b5fd}
+.qec-row.mini .qec-track.flip.z{background:linear-gradient(90deg,var(--bg-2),rgba(34,211,238,.28),var(--bg-2));color:#67e8f9}
+.qec-row.mini .qec-track.flip.y{background:linear-gradient(90deg,rgba(124,58,237,.3),rgba(34,211,238,.3));color:#fbcfe8}
+
+/* combined-error legend */
+.qec-legend{
+  display:flex;flex-wrap:wrap;gap:6px 18px;margin:0 0 14px;padding:10px 14px;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:8px;font-size:.8rem;
+}
+.qec-legend b{font-family:'JetBrains Mono',monospace}
+.qec-legend .lx{color:#c4b5fd}
+.qec-legend .lz{color:#67e8f9}
+.qec-legend .ly{color:#fbcfe8}
+
 .qec-decode-row{
   text-align:center;padding:10px;background:var(--surface-2);border-radius:8px;
   border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:.95rem;

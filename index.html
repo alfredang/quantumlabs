@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>QuantumLab Beginner — Learn Quantum Computing Visually</title>
-<link rel="stylesheet" href="style.css?v=20260614b" />
+<link rel="stylesheet" href="style.css?v=20260614c" />
 </head>
 <body>
 
@@ -1426,6 +1426,12 @@ If f(x) = 1:
         <div class="qec-stage">
           <div class="qec-section-title" id="qec-flow">① Encode  →  ② Channel (noise)  →  ③ Majority vote</div>
           <div class="qec-channel" id="qec-channel"></div>
+          <div class="qec-legend" id="qec-legend" hidden>
+            <span><b class="lx">⚡ X</b> bit-flip — swaps |0⟩↔|1⟩ (value changes)</span>
+            <span><b class="lz">🌀 Z</b> phase-flip — |1⟩→ −|1⟩ (value unchanged; flips the block's sign)</span>
+            <span><b class="ly">✦ Y</b> — both errors on one qubit</span>
+            <span class="muted">Each qubit rolls X and Z independently, so a random mix appears.</span>
+          </div>
           <div class="qec-decode-row">
             Decoded logical bit: <span class="qec-decoded" id="qec-decoded">|1⟩</span>
           </div>
@@ -3191,6 +3197,6 @@ if balanced:  data → |1⟩   →   measurement = 1</pre>
 
 <div id="toast" class="toast"></div>
 
-<script src="script.js?v=20260614b"></script>
+<script src="script.js?v=20260614c"></script>
 </body>
 </html>
